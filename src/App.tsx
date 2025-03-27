@@ -1,5 +1,5 @@
 import React from "react";
-import TaskPage from "./components/TaskPage.tsx";
+import TaskPage from "./components/TaskPage";
 import "./App.css";
 
 function App() {

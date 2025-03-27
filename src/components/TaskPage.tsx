@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
-const TaskPage = () => {
+const TaskPage: React.FC = () => {
   const [tasks, setTasks] = useState<string[]>([]);
-  const [newTask, setNewTask] = useState("");
+  const [newTask, setNewTask] = useState<string>("");
 
   useEffect(() => {
-    const savedTasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    const savedTasks: string[] = JSON.parse(
+      localStorage.getItem("tasks") || "[]"
+    );
     setTasks(savedTasks);
   }, []);
 
@@ -13,14 +15,14 @@ const TaskPage = () => {
     localStorage.setItem("tasks", JSON.stringify(tasks));
   }, [tasks]);
 
-  const addTask = () => {
+  const addTask = (): void => {
     if (newTask.trim() && tasks.length < 6) {
       setTasks([...tasks, newTask]);
       setNewTask("");
     }
   };
 
-  const removeTask = (index: number) => {
+  const removeTask = (index: number): void => {
     setTasks(tasks.filter((_, i) => i !== index));
   };
 
