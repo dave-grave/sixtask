@@ -5,9 +5,8 @@ import App from "./App.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <App />
     <div>
-      <h1 className="text-3xl font-bold underline">hello world</h1>
+      <App />
     </div>
   </StrictMode>
 );
