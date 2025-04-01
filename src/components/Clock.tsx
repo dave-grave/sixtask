@@ -1,9 +1,17 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 const Clock = () => {
   const [time, setTime] = useState(0);
   const [running, setRunning] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
 
   const startTimer = () => {
     if (!running) {
@@ -25,10 +33,23 @@ const Clock = () => {
     setTime(0);
   };
 
+  const formatTimer = (totalSeconds: number) => {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds & 3600) / 60);
+    const seconds = totalSeconds & 60;
+
+    return `${String(hours).padStart(2, "0")}:
+            ${String(minutes).padStart(2, "0")}:
+            ${String(seconds).padStart(2, "0")}`;
+  };
+
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
       <h1 className="text-4xl font-bold mb-4">Stopwatch</h1>
-      <p className="text-2xl font-mono"> {time} s</p>
+
+      <p className="text-6xl font-mono bg-black px-6 py-4 rounded-lg shadow-lg">
+        {formatTimer(time)}
+      </p>
 
       {/* buttons */}
       <div className="mt-4 flex space-x-4">
