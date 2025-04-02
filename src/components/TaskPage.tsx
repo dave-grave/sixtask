@@ -27,12 +27,12 @@ const TaskPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 bg-gray-900 text-white rounded-lg shadow-lg">
+    <div className="max-w-200 mx-auto p-4 bg-gray-900 text-white rounded-lg shadow-lg">
       <h2 className="text-xl font-bold mb-4">Task List</h2>
       <div className="flex mb-4">
         <input
           type="text"
-          className="flex-1 p-2 text-black rounded-1"
+          className="flex-1 p-2 text-black rounded-1 text-white"
           placeholder="Add a task..."
           value={newTask}
           onChange={(e) => setNewTask(e.target.value)}

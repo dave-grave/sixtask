@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
+import { formatTime } from "../../utils";
 
-const Clock = () => {
+const Stopwatch = () => {
   const [time, setTime] = useState(0);
   const [running, setRunning] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -33,40 +34,45 @@ const Clock = () => {
     setTime(0);
   };
 
-  const formatTimer = (totalSeconds: number) => {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-
-    return `${String(hours).padStart(2, "0")}:
-            ${String(minutes).padStart(2, "0")}:
-            ${String(seconds).padStart(2, "0")}`;
-  };
-
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">
-      <h1 className="text-4xl font-bold mb-4">Stopwatch</h1>
+    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-gray-800 to-gray-900 text-white p-4">
+      <div className="flex justify-center space-between gap-8">
+        {/* <Router>
+          <button>
+            <div className="app">
+              <nav>
+                <Link to="/">Home</Link>
+              </nav>
+            </div>
+          </button>
+        </Router> */}
+        {/* <p>second</p> */}
+      </div>
+      <h1 className="text-5xl font-bold mb-6 text-blue-400">Stopwatch</h1>
 
       <p className="text-6xl font-mono bg-black px-6 py-4 rounded-lg shadow-lg">
-        {formatTimer(time)}
+        {formatTime(time)}
       </p>
 
       {/* buttons */}
-      <div className="mt-4 flex space-x-4">
+      <div className="mt-6 flex space-x-4">
         <button
-          className="bg-green-500 px-4 py-2 rounded hover:bg-green-600"
+          className="bg-green-500 px-6 py-3 rounded-lg shadow-md text-lg font-semibold
+           hover:bg-green-600 transition duration-200"
           onClick={startTimer}
         >
           Start
         </button>
         <button
-          className="bg-red-500 px-4 py-2 rounded hover:bg-red-600"
+          className="bg-red-500 px-6 py-3 rounded-lg shadow-md text-lg font-semibold 
+          hover:bg-red-600 transition duration-200"
           onClick={stopTimer}
         >
           Stop
         </button>
         <button
-          className="bg-gray-500 px-4 py-2 rounded hover:bg-gray-600"
+          className="bg-gray-500 px-6 py-3 rounded-lg shadow-md text-lg font-semibold
+           hover:bg-gray-600 transition duration-200"
           onClick={resetTimer}
         >
           Reset
@@ -76,4 +82,4 @@ const Clock = () => {
   );
 };
 
-export default Clock;
+export default Stopwatch;
