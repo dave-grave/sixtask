@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import { formatTime, createTimer } from "../../utils";
 
 const Countdown = () => {
@@ -16,9 +16,6 @@ const Countdown = () => {
   const startCountdown = () => {
     if (!running && timeLeft > 0) {
       setRunning(true);
-      // timerRef.current = window.setInterval(() => {
-      //   setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
-      // }, 1000);
       timerRef.current = createTimer(timeLeft, setTimeLeft, () =>
         setRunning(false)
       );
