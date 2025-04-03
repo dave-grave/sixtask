@@ -1,23 +1,27 @@
-import { useState, useRef, useEffect } from "react";
-import { formatTime } from "../../utils";
+import React, { useState, useRef, useEffect } from "react";
+import { formatTime, createTimer } from "../../utils";
 
 const Countdown = () => {
   const [timeLeft, setTimeLeft] = useState(300);
   const [running, setRunning] = useState(false);
-  const timerRef = useRef<number | null>(null);
+  const [customMinutes, setCustomMinutes] = useState("");
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+      timerRef.current && clearInterval(timerRef.current);
     };
   }, []);
 
   const startCountdown = () => {
     if (!running && timeLeft > 0) {
       setRunning(true);
-      timerRef.current = window.setInterval(() => {
-        setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
-      }, 1000);
+      // timerRef.current = window.setInterval(() => {
+      //   setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+      // }, 1000);
+      timerRef.current = createTimer(timeLeft, setTimeLeft, () =>
+        setRunning(false)
+      );
     }
   };
 
@@ -34,10 +38,34 @@ const Countdown = () => {
     setTimeLeft(300);
   };
 
+  const applyCustomTime = () => {
+    const minutes = parseInt(customMinutes, 10);
+    if (!isNaN(minutes) && minutes > 0) {
+      setTimeLeft(minutes * 60);
+      setCustomMinutes("");
+    }
+  };
+
   return (
     <div className="text-center">
       <h2 className="text-2xl mb-4">Countdown Timer</h2>
       <p className="text-5xl">{formatTime(timeLeft)}</p>
+
+      <div className="mt-4 flex justify-center space-x-2">
+        <input
+          type="number"
+          placeholder="Minutes"
+          value={customMinutes}
+          onChange={(e) => setCustomMinutes(e.target.value)}
+          className="p-2 border rounded-md w-20 text-white"
+        />
+        <button
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+          onClick={applyCustomTime}
+        >
+          Set Time
+        </button>
+      </div>
 
       <div className="mt-4 flex space-x-5">
         <button

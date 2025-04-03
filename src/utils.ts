@@ -7,3 +7,20 @@ export const formatTime = (seconds: number): string => {
             ${String(minutes).padStart(2, "0")}:
             ${String(secs).padStart(2, "0")}`;
 };
+
+export const createTimer = (
+  duration: number,
+  onTick: (remaining: number) => void,
+  onComplete: () => void
+) => {
+  let remaining = duration;
+  const timerId = setInterval(() => {
+    remaining -= 1;
+    onTick(remaining);
+    if (remaining <= 0) {
+      clearInterval(timerId);
+      onComplete();
+    }
+  }, 1000);
+  return timerId;
+};
