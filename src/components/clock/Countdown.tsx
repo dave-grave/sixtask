@@ -1,15 +1,19 @@
 import { useState, useRef, useEffect } from "react";
 import { formatTime, createTimer } from "../../utils";
+import { useTimer } from "../context/TimerContext";
 
 const Countdown = () => {
-  const [timeLeft, setTimeLeft] = useState(300);
-  const [running, setRunning] = useState(false);
+  const { timeLeft, setTimeLeft, running, setRunning } = useTimer();
   const [customMinutes, setCustomMinutes] = useState("");
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     return () => {
-      timerRef.current && clearInterval(timerRef.current);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+      setRunning(false);
     };
   }, []);
 

@@ -1,31 +1,25 @@
 import { useState, useRef, useEffect } from "react";
 import { formatTime, createTimer } from "../../utils";
 
-const WORK_DURATION = 10; /* * 60*/
+const WORK_DURATION = 3; /* * 60*/
 const BREAK_DURATION = 5; /* * 60*/
 
 const Pomodoro = () => {
-  const [timeLeft, setTimeLeft] = useState(10 /* * 60*/);
+  const [timeLeft, setTimeLeft] = useState(WORK_DURATION);
   const [running, setRunning] = useState(false);
   const [isWorkSession, setIsWorkSession] = useState(true);
   const [cycleCount, setCycleCount] = useState(0);
-  // const [onBreak, setOnBreak] = useState(false);
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      timerRef.current && clearInterval(timerRef.current);
-    };
-  }, []);
 
   const startPomodoro = () => {
     if (!running) {
       setRunning(true);
+      console.log("running");
       timerRef.current = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
             handleTimerEnd();
-            return prev;
+            return 0;
           }
           return prev - 1;
         });
@@ -50,26 +44,30 @@ const Pomodoro = () => {
 
   const handleTimerEnd = () => {
     stopPomodoro();
+    const temp = !isWorkSession;
+    setIsWorkSession(temp);
+    setTimeLeft(temp ? WORK_DURATION : BREAK_DURATION);
 
-    setIsWorkSession((prevIsWorkSession) => {
-      const nextSessionIsWork = !prevIsWorkSession;
-
-      setTimeLeft(nextSessionIsWork ? WORK_DURATION : BREAK_DURATION);
-      if (nextSessionIsWork) {
-        setCycleCount((prev) => prev + 1);
-      }
-
-      return nextSessionIsWork;
-    });
-    // if (isWorkSession) {
-    //   setTimeLeft(BREAK_DURATION);
-    // } else {
-    //   setTimeLeft(WORK_DURATION);
-    //   setCycleCount((prev) => prev + 1);
-    // }
-    // setIsWorkSession(!isWorkSession);
-    startPomodoro();
+    if (temp) {
+      setCycleCount((prev) => prev + 1);
+    }
   };
+
+  // clean up interval on unmount
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+      }
+    };
+  }, []);
+
+  // // start timer when session changes
+  // useEffect(() => {
+  //   if (running) {
+  //     startPomodoro();
+  //   }
+  // }, [isWorkSession]);
 
   return (
     <div className="text-center">
