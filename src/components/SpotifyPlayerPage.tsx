@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import SpotifyWebApi from "spotify-web-api-js";
 
 declare global {
@@ -14,25 +15,51 @@ const SpotifyPlayerPage = () => {
   const [player, setPlayer] = useState<any>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [deviceId, setDeviceId] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log("player page mounted");
+
     const token = localStorage.getItem("spotifyAccessToken");
+    console.log("access token found in player.tsx: ", token);
+
     if (!token) {
       console.error("no access token found");
+      navigate("/login");
       return;
     }
 
     spotifyApi.setAccessToken(token);
+    setLoading(false);
+  }, [navigate]);
 
-    const script = document.createElement("script");
-    script.src = "https://sdk.scdn.co/spotify-player-js";
-    script.async = true;
-    document.body.appendChild(script);
+  useEffect(() => {
+    // const script = document.createElement("script");
+    // script.src = "https://sdk.scdn.co/spotify-player-js";
+    // script.async = true;
+    // document.body.appendChild(script);
+
+    const scriptId = "spotify-sdk";
+    if (!document.getElementById(scriptId)) {
+      const script = document.createElement("script");
+      script.id = scriptId;
+      script.src = "https://sdk.scdn.co/spotify-player.js";
+      script.async = true;
+      document.body.appendChild(script);
+    }
 
     window.onSpotifyWebPlaybackSDKReady = () => {
       const playerInstance = new window.Spotify.Player({
         name: "My custom spotify player",
-        getOAuthToken: (cb: (token: string) => void) => cb(token),
+        getOAuthToken: (cb: (token: string) => void) => {
+          const freshToken = localStorage.getItem("spotifyAccessToken");
+          if (freshToken) {
+            cb(freshToken);
+          } else {
+            console.error("no token found in getOAuthToken");
+          }
+        },
         volume: 0.5,
       });
 
@@ -41,9 +68,27 @@ const SpotifyPlayerPage = () => {
       playerInstance.addListener("ready", (event: { device_id: string }) => {
         console.log("Ready with device ID", event.device_id);
         setDeviceId(event.device_id);
+
+        spotifyApi.transferMyPlayback([event.device_id]).then(() => {
+          console.log("playback transferred to web player");
+        });
       });
 
-      playerInstance.connect();
+      playerInstance.connect().then((success: boolean) => {
+        if (success) {
+          console.log("spotify connected successfully");
+          setLoading(false);
+        } else {
+          console.error("spotify failed to connect");
+        }
+      });
+
+      return () => {
+        const script = document.getElementById(scriptId);
+        if (script) {
+          document.body.removeChild(script);
+        }
+      };
     };
   }, []);
 
@@ -62,6 +107,12 @@ const SpotifyPlayerPage = () => {
     await spotifyApi.pause({ device_id: deviceId });
     setIsPlaying(false);
   };
+
+  if (loading) {
+    return (
+      <p className="text-white text-center mt-10">Loading spotify player... </p>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-900 text-white">

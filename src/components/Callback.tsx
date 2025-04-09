@@ -7,15 +7,21 @@ const Callback = () => {
   useEffect(() => {
     const hash = window.location.hash;
     const params = new URLSearchParams(hash.substring(1));
-
     const accessToken = params.get("access_token");
 
+    console.log("Callback URL Hash: ", hash);
+
     if (accessToken) {
-      localStorage.setItem("spotifyAccesToken", accessToken);
-      navigate("/spotify");
+      console.log("access token found in callback.tsx:", accessToken);
+      localStorage.setItem("spotifyAccessToken", accessToken);
+
+      setTimeout(() => {
+        console.log("navigating to spotify");
+        navigate("/spotify");
+      }, 300);
     } else {
       console.error("No access token found in URL");
-      navigate("/");
+      navigate("/login");
     }
   }, [navigate]);
 
