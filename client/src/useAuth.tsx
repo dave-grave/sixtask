@@ -18,10 +18,10 @@ export default function useAuth(code: string) {
         code,
       })
       .then((res) => {
-        console.log("/login access token", res.data);
+        // console.log("/login access token", res.data);
         setAccessToken(res.data.accessToken);
         setRefreshToken(res.data.refreshToken);
-        setExpiresIn(61);
+        setExpiresIn(res.data.expiresIn);
         window.history.pushState({}, "", "/");
       })
       .catch((err) => {
@@ -39,15 +39,15 @@ export default function useAuth(code: string) {
       return;
     }
 
-    const timeout = setInterval(() => {
+    const interval = setInterval(() => {
       axios
         .post("http://localhost:3001/refresh", {
           refreshToken,
         })
         .then((res) => {
-          console.log("/refresh access token", res.data);
+          // console.log("/refresh access token", res.data);
           setAccessToken(res.data.accessToken);
-          setExpiresIn(61);
+          setExpiresIn(res.data.expiresIn);
           window.history.pushState({}, "", "/");
         })
         .catch((err) => {
@@ -56,7 +56,7 @@ export default function useAuth(code: string) {
         });
     }, (expiresIn - 60) * 1000);
 
-    return () => clearInterval(timeout);
+    return () => clearInterval(interval);
   }, [refreshToken, expiresIn]);
 
   return accessToken;
