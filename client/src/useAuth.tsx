@@ -4,7 +4,7 @@ import axios from "axios";
 export default function useAuth(code: string) {
   const [accessToken, setAccessToken] = useState<string>();
   const [refreshToken, setRefreshToken] = useState<string>();
-  const [expiresIn, setExpiresIn] = useState<string>();
+  const [expiresIn, setExpiresIn] = useState<number>();
 
   const loginHasRun = useRef(false);
   const refreshHasRun = useRef(false);
@@ -21,7 +21,7 @@ export default function useAuth(code: string) {
         console.log("/login access token", res.data);
         setAccessToken(res.data.accessToken);
         setRefreshToken(res.data.refreshToken);
-        setExpiresIn(res.data.expiresIn);
+        setExpiresIn(61);
         window.history.pushState({}, "", "/");
       })
       .catch((err) => {
@@ -31,29 +31,32 @@ export default function useAuth(code: string) {
   }, [code]);
 
   useEffect(() => {
-    if (refreshHasRun.current) return;
-    refreshHasRun.current = true;
+    // if (refreshHasRun.current) return;
+    // refreshHasRun.current = true;
 
-    if (!refreshToken) {
-      console.log("no refresh token yet");
+    if (!refreshToken || !expiresIn) {
+      console.log("no refresh token yet, returning.");
       return;
     }
 
-    axios
-      .post("http://localhost:3001/refresh", {
-        refreshToken,
-      })
-      .then((res) => {
-        console.log("/refresh access token", res.data);
-        setAccessToken(res.data.accessToken);
-        setRefreshToken(res.data.refreshToken);
-        setExpiresIn(res.data.expiresIn);
-        // window.history.pushState({}, "", "/");
-      })
-      .catch((err) => {
-        console.log("/refresh POST error", err);
-        // window.location.href = "/";
-      });
+    const timeout = setInterval(() => {
+      axios
+        .post("http://localhost:3001/refresh", {
+          refreshToken,
+        })
+        .then((res) => {
+          console.log("/refresh access token", res.data);
+          setAccessToken(res.data.accessToken);
+          setExpiresIn(61);
+          window.history.pushState({}, "", "/");
+        })
+        .catch((err) => {
+          console.log("/refresh POST error", err);
+          window.location.href = "/";
+        });
+    }, (expiresIn - 60) * 1000);
+
+    return () => clearInterval(timeout);
   }, [refreshToken, expiresIn]);
 
   return accessToken;
