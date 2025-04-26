@@ -1,6 +1,14 @@
-export default function TrackSearchResult({ track, chooseTrack }: any) {
+export default function TrackSearchResult({
+  track,
+  chooseTrack,
+}: {
+  track: any;
+  chooseTrack: (track: any) => void;
+}) {
   function handlePlay() {
+    console.log("play song");
     chooseTrack(track);
+    console.log(track);
   }
 
   return (
