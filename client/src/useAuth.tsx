@@ -18,15 +18,15 @@ export default function useAuth(code: string) {
         code,
       })
       .then((res) => {
-        // console.log("/login access token", res.data);
+        console.log("useauth.tsx /login access token", res.data);
         setAccessToken(res.data.accessToken);
         setRefreshToken(res.data.refreshToken);
         setExpiresIn(res.data.expiresIn);
         window.history.pushState({}, "", "/");
       })
       .catch((err) => {
-        console.log("/login POST error", err);
-        window.location.href = "/";
+        console.log("useauth.tsx /login POST error", err);
+        // window.location.href = "/";
       });
   }, [code]);
 
@@ -45,14 +45,14 @@ export default function useAuth(code: string) {
           refreshToken,
         })
         .then((res) => {
-          // console.log("/refresh access token", res.data);
+          console.log("useauth.tsx  /refresh access token", res.data);
           setAccessToken(res.data.accessToken);
           setExpiresIn(res.data.expiresIn);
           window.history.pushState({}, "", "/");
         })
         .catch((err) => {
-          console.log("/refresh POST error", err);
-          window.location.href = "/";
+          console.log("useauth.tsx /refresh POST error", err);
+          // window.location.href = "/";
         });
     }, (expiresIn - 60) * 1000);
 

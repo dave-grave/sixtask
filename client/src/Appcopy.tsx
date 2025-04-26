@@ -1,15 +1,7 @@
 import { useEffect, useState } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Link,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import TaskPage from "./components/TaskPage";
 import TimerSelector from "./components/TimeSelector";
-import Callback from "./components/Callback";
-import SpotifyPlayerPage from "./components/SpotifyPlayerPage";
 import Login from "./Login";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
@@ -35,7 +27,7 @@ function App() {
   }, []);
 
   return (
-    <Router>
+    <BrowserRouter>
       <div className="app">
         <nav>
           <Link to="/">Tasks</Link>
@@ -49,7 +41,6 @@ function App() {
         <Routes>
           <Route path="/" element={<TaskPage />} />
           <Route path="/timer" element={<TimerSelector />} />
-          <Route path="/callback" element={<Callback />} />
           <Route
             path="/spotify"
             element={token ? <SpotifyPlayerPage /> : <Navigate to="/login" />}
@@ -57,7 +48,7 @@ function App() {
           <Route path="/login" element={<Login />} />
         </Routes>
       </div>
-    </Router>
+    </BrowserRouter>
   );
 }
 

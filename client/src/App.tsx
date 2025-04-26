@@ -1,12 +1,39 @@
-import Login from "./Login";
-import Dashboard from "./Dashboard";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
+import Login from "./Login";
+import Dashboard from "./Dashboard";
+import TaskPage from "./components/TaskPage";
+import TimerSelector from "./components/TimeSelector";
 
 function App() {
   const code = new URLSearchParams(window.location.search).get("code");
 
-  return code ? <Dashboard code={code} /> : <Login />;
+  // return code ? <Dashboard code={code} /> : <Login />;
+
+  return (
+    <BrowserRouter>
+      <div>
+        <nav className="flex justify-center space-between gap-8">
+          <Link to="/">Tasks</Link>
+          <Link to="/timer">Timer</Link>
+          {code ? (
+            <Link to="/dashboard">Dashboard</Link>
+          ) : (
+            <Link to="/login">Login</Link>
+          )}
+        </nav>
+      </div>
+      <Routes>
+        <Route path="/" element={<TaskPage />} />
+        <Route path="/timer" element={<TimerSelector />} />
+        <Route path="/dashboard" element={<Dashboard code={code} />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
+  );
+
   // return <Login />;
 }
 
