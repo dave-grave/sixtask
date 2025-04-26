@@ -6,9 +6,7 @@ export default function TrackSearchResult({
   chooseTrack: (track: any) => void;
 }) {
   function handlePlay() {
-    console.log("play song");
     chooseTrack(track);
-    console.log(track);
   }
 
   return (

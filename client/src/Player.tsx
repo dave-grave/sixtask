@@ -9,6 +9,7 @@ export default function Player({ accessToken, trackUri }: any) {
   }, [trackUri]);
 
   if (!accessToken) return null;
+
   return (
     <SpotifyPlayer
       token={accessToken}
