@@ -7,7 +7,7 @@ export default function useAuth(code: string) {
   const [expiresIn, setExpiresIn] = useState<number>();
 
   const loginHasRun = useRef(false);
-  const refreshHasRun = useRef(false);
+  // const refreshHasRun = useRef(false);
 
   useEffect(() => {
     if (loginHasRun.current) return;
