@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
-import Login from "./Login";
-import Dashboard from "./Dashboard";
+import Login from "./components/spotify/Login";
+import Dashboard from "./components/spotify/Dashboard";
 import TaskPage from "./components/TaskPage";
-import TimerSelector from "./components/TimeSelector";
+import TimerSelector from "./components/clock/TimeSelector";
 
 function App() {
   const code = new URLSearchParams(window.location.search).get("code");

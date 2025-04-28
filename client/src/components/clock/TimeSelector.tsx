@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Stopwatch from "./clock/Stopwatch";
-import Countdown from "./clock/Countdown";
-import Pomodoro from "./clock/Pomodoro";
-import { formatTime } from "../utils";
+import Stopwatch from "./Stopwatch";
+import Countdown from "./Countdown";
+import Pomodoro from "./Pomodoro";
+import { formatTime } from "../../utils";
 
 const TimerSelector = () => {
   const [activeTimer, setActiveTimer] = useState("stopwatch");
