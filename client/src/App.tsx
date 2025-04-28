@@ -5,10 +5,11 @@ import Login from "./components/spotify/Login";
 import Dashboard from "./components/spotify/Dashboard";
 import TaskPage from "./components/TaskPage";
 import TimerSelector from "./components/clock/TimeSelector";
+import { useSpotifyAuth } from "./components/context/SpotifyAuthContext";
 
 function App() {
+  const { accessToken } = useSpotifyAuth();
   const code = new URLSearchParams(window.location.search).get("code");
-
   // return code ? <Dashboard code={code} /> : <Login />;
 
   return (
@@ -27,7 +28,7 @@ function App() {
       <Routes>
         <Route path="/" element={<TaskPage />} />
         <Route path="/timer" element={<TimerSelector />} />
-        <Route path="/dashboard" element={<Dashboard code={code} />} />
+        <Route path="/dashboard" element={code ? <Dashboard /> : <Login />} />
         <Route path="/login" element={<Login />} />
         <Route path="*" element={<Login />} />
       </Routes>

@@ -1,10 +1,19 @@
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { useSpotifyAuth } from "../context/SpotifyAuthContext";
 
 export default function useAuth(code: string) {
-  const [accessToken, setAccessToken] = useState<string>();
-  const [refreshToken, setRefreshToken] = useState<string>();
-  const [expiresIn, setExpiresIn] = useState<number>();
+  // const [accessToken, setAccessToken] = useState<string>();
+  // const [refreshToken, setRefreshToken] = useState<string>();
+  // const [expiresIn, setExpiresIn] = useState<number>();
+  const {
+    accessToken,
+    setAccessToken,
+    refreshToken,
+    setRefreshToken,
+    expiresIn,
+    setExpiresIn,
+  } = useSpotifyAuth();
 
   const loginHasRun = useRef(false);
   // const refreshHasRun = useRef(false);
@@ -28,7 +37,7 @@ export default function useAuth(code: string) {
         console.log("useauth.tsx /login POST error", err);
         // window.location.href = "/";
       });
-  }, [code]);
+  }, [code, accessToken, setAccessToken, setRefreshToken, setExpiresIn]);
 
   useEffect(() => {
     // if (refreshHasRun.current) return;
@@ -57,7 +66,7 @@ export default function useAuth(code: string) {
     }, (expiresIn - 60) * 1000);
 
     return () => clearInterval(interval);
-  }, [refreshToken, expiresIn]);
+  }, [refreshToken, expiresIn, setAccessToken, setExpiresIn]);
 
   return accessToken;
 }
