@@ -5,6 +5,7 @@ import Login from "./components/spotify/Login";
 import Dashboard from "./components/spotify/Dashboard";
 import TaskPage from "./components/TaskPage";
 import TimerSelector from "./components/clock/TimeSelector";
+import FileExplorer from "./FileExplorer";
 
 function App() {
   const code = new URLSearchParams(window.location.search).get("code");
@@ -22,6 +23,7 @@ function App() {
           ) : (
             <Link to="/login">Login</Link>
           )}
+          <Link to="/files">Files</Link>
         </nav>
       </div>
       <Routes>
@@ -29,6 +31,7 @@ function App() {
         <Route path="/timer" element={<TimerSelector />} />
         <Route path="/dashboard" element={<Dashboard code={code} />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/files" element={<FileExplorer />} />
         <Route path="*" element={<Login />} />
       </Routes>
     </BrowserRouter>

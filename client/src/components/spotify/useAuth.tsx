@@ -31,11 +31,8 @@ export default function useAuth(code: string) {
   }, [code]);
 
   useEffect(() => {
-    // if (refreshHasRun.current) return;
-    // refreshHasRun.current = true;
-
     if (!refreshToken || !expiresIn) {
-      console.log("no refresh token yet, returning.");
+      // console.log("no refresh token yet, returning.");
       return;
     }
 
@@ -45,7 +42,7 @@ export default function useAuth(code: string) {
           refreshToken,
         })
         .then((res) => {
-          console.log("useauth.tsx  /refresh access token", res.data);
+          console.log("useauth.tsx /refresh access token", res.data);
           setAccessToken(res.data.accessToken);
           setExpiresIn(res.data.expiresIn);
           window.history.pushState({}, "", "/");

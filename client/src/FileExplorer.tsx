@@ -1,0 +1,82 @@
+import React, { useState, ChangeEvent } from "react";
+import axios from "axios";
+
+type UploadStatus = "idle" | "uploading" | "success" | "error";
+
+export default function FileExplorer() {
+  const [file, setFile] = useState<File | null>(null);
+  const [status, setStatus] = useState<UploadStatus>("idle");
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setFile(event.target.files[0]);
+    }
+  };
+
+  const handleFileUpload = async () => {
+    if (!file) return;
+
+    setStatus("uploading");
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      await axios.post("https://httpbin.org/post", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      setStatus("success");
+    } catch {
+      setStatus("error");
+    }
+  };
+
+  return (
+    <div className=" flex flex-col items-center">
+      <input type="file" onChange={handleFileChange}></input>
+
+      {file && (
+        <div className="mb-4 text-sm">
+          <p>File name: {file.name}</p>
+          <p>Size: {(file.size / 1024).toFixed(2)} KB</p>
+          <p>Type: {file.type}</p>
+        </div>
+      )}
+
+      {file && (
+        <button
+          type="button"
+          className={`px-4 py-2 rounded transition ${
+            status === "uploading"
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-700 transition px-4 py-2 rounded"
+          }`}
+          onClick={handleFileUpload}
+          disabled={status === "uploading"}
+        >
+          {status === "uploading" ? "loading ..." : "upload a file..."}
+        </button>
+      )}
+
+      {/* {file && status !== "uploading" && (
+        <button
+          type="button"
+          className="bg-blue-500 hover:bg-blue-700 transition px-4 py-2 rounded"
+          onClick={handleFileUpload}
+        >
+          upload
+        </button>
+      )} */}
+
+      {status === "success" && (
+        <p className="text-sm text-green-600">file uploaded successfully!</p>
+      )}
+
+      {status === "error" && (
+        <p className="text-sm text-red-600">file upload failed</p>
+      )}
+    </div>
+  );
+}
