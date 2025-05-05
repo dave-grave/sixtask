@@ -1,3 +1,4 @@
+// displays search results from setSearchResult in Dashboard.tsx
 export default function TrackSearchResult({
   track,
   chooseTrack,

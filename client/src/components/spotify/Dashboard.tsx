@@ -5,6 +5,7 @@ import useAuth from "./useAuth";
 import TrackSearchResult from "./TrackSearchResult";
 import Player from "./Player";
 
+// create spotifyApi object with clientId
 const spotifyApi = new SpotifyWebApi({
   clientId: "40b54d38e5504b77a233d1c02d045ac7",
 });
@@ -20,21 +21,25 @@ export default function Dashboard({ code }: { code: any }) {
     setSearch("");
   }
 
+  // set accessToken if it exists
   useEffect(() => {
     if (!accessToken) return;
     spotifyApi.setAccessToken(accessToken);
   }, [accessToken]);
 
   useEffect(() => {
+    // check for an empty search or if accessToken exists
     if (!search) return setSearchResults([]);
     if (!accessToken) return;
 
+    // keep track of if setSearchResults has finished or not.
+    // if it is not finished this prevents us from calling it again.
     let cancel = false;
+
     spotifyApi.searchTracks(search).then((res: any) => {
-      // console.log(res.body);
-      // console.log(res.body.tracks.items);
       if (cancel) return;
 
+      // find smallest album image to use in search results
       setSearchResults(
         res.body.tracks.items.map((track: any) => {
           const smallestAlbumImage = track.album.images.reduce(
@@ -57,6 +62,8 @@ export default function Dashboard({ code }: { code: any }) {
     return () => {
       cancel = true;
     };
+
+    // runs whenever we search for a different song or when accessToken exists
   }, [search, accessToken]);
 
   return (
@@ -69,14 +76,16 @@ export default function Dashboard({ code }: { code: any }) {
       />
       <div className="flex-grow-1 my-2" style={{ overflowY: "auto" }}>
         {searchResults.map((track: any) => (
+          // display searchResults
           <TrackSearchResult
             track={track}
-            key={track.uri}
+            key={track.uri} // each track is uniquely identified by its uri
             chooseTrack={chooseTrack}
           />
         ))}
       </div>
       <div>
+        {/* display the player UI */}
         <Player accessToken={accessToken} trackUri={playingTrack?.uri} />
       </div>
     </Container>

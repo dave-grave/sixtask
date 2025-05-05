@@ -8,6 +8,7 @@ import TimerSelector from "./components/clock/TimeSelector";
 import FileExplorer from "./FileExplorer";
 
 function App() {
+  // get user's authentication code from spotify
   const code = new URLSearchParams(window.location.search).get("code");
 
   // return code ? <Dashboard code={code} /> : <Login />;
@@ -18,6 +19,7 @@ function App() {
         <nav className="flex justify-center space-between gap-8">
           <Link to="/">Tasks</Link>
           <Link to="/timer">Timer</Link>
+          {/* conditionally display Dashboard or Login if code exists */}
           {code ? (
             <Link to="/dashboard">Dashboard</Link>
           ) : (
@@ -36,8 +38,6 @@ function App() {
       </Routes>
     </BrowserRouter>
   );
-
-  // return <Login />;
 }
 
 export default App;
