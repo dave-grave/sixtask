@@ -19,7 +19,7 @@ function App() {
         <nav className="flex justify-center space-between gap-8">
           <Link to="/">Tasks</Link>
           <Link to="/timer">Timer</Link>
-          {/* conditionally display Dashboard or Login if code exists */}
+          {/* conditionally display Dashboard or Login link */}
           {code ? (
             <Link to="/dashboard">Dashboard</Link>
           ) : (
@@ -34,6 +34,8 @@ function App() {
         <Route path="/dashboard" element={<Dashboard code={code} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/files" element={<FileExplorer />} />
+
+        {/* fallback route */}
         <Route path="*" element={<Login />} />
       </Routes>
     </BrowserRouter>

@@ -67,27 +67,32 @@ export default function Dashboard({ code }: { code: any }) {
   }, [search, accessToken]);
 
   return (
-    <Container className="d-flex flex-column py-2" style={{ height: "100vh" }}>
-      <Form.Control
-        type="search"
-        placeholder="Search..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-      <div className="flex-grow-1 my-2" style={{ overflowY: "auto" }}>
-        {searchResults.map((track: any) => (
-          // display searchResults
-          <TrackSearchResult
-            track={track}
-            key={track.uri} // each track is uniquely identified by its uri
-            chooseTrack={chooseTrack}
-          />
-        ))}
-      </div>
-      <div>
-        {/* display the player UI */}
-        <Player accessToken={accessToken} trackUri={playingTrack?.uri} />
-      </div>
-    </Container>
+    <div>
+      <Container
+        className="d-flex flex-column py-2"
+        style={{ height: "100vh" }}
+      >
+        <Form.Control
+          type="search"
+          placeholder="Search..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <div className="flex-grow-1 my-2" style={{ overflowY: "auto" }}>
+          {searchResults.map((track: any) => (
+            // display searchResults
+            <TrackSearchResult
+              track={track}
+              key={track.uri} // each track is uniquely identified by its uri
+              chooseTrack={chooseTrack}
+            />
+          ))}
+        </div>
+        <div>
+          {/* display the player UI */}
+          <Player accessToken={accessToken} trackUri={playingTrack?.uri} />
+        </div>
+      </Container>
+    </div>
   );
 }
