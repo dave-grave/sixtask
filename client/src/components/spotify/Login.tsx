@@ -10,6 +10,7 @@ export default function Login() {
 
   return (
     <div>
+      {/* conditionally render dashboard if code exists */}
       {code ? (
         <Dashboard code={code} />
       ) : (
