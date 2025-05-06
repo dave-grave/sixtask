@@ -1,71 +1,36 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useLocalStorage } from "usehooks-ts";
 
-const TaskPage: React.FC = () => {
-  const [tasks, setTasks] = useState<string[]>([]);
-  const [newTask, setNewTask] = useState<string>("");
+export default function TaskPage() {
+  const [tasks, setTasks] = useLocalStorage<string[]>("tasks", []);
 
+  // initialize the array when the component mounts
   useEffect(() => {
-    const savedTasks: string[] = JSON.parse(
-      localStorage.getItem("tasks") || "[]"
-    );
-    setTasks(savedTasks);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("tasks", JSON.stringify(tasks));
-  }, [tasks]);
-
-  const addTask = (): void => {
-    if (newTask.trim() && tasks.length < 6) {
-      setTasks([...tasks, newTask]);
-      setNewTask("");
+    if (tasks.length === 0) {
+      setTasks(["a", "a", "a", "a", "ab", "a"]);
     }
-  };
+  }, [tasks, setTasks]);
 
-  const removeTask = (index: number): void => {
-    setTasks(tasks.filter((_, i) => i !== index));
+  // update localStorage list of tasks when we enter input
+  const handleInputChange = (index: number, value: string) => {
+    const updatedTasks = [...tasks];
+    updatedTasks[index] = value;
+    setTasks(updatedTasks);
   };
 
   return (
-    <div className="max-w-200 mx-auto p-4 bg-gray-900 text-white rounded-lg shadow-lg">
-      <h2 className="text-xl font-bold mb-4">Task List</h2>
-      <div className="flex mb-4">
+    <div className="flex flex-col items-center gap-12 py-4">
+      <h1 className="text-xl font-bold mb-4">sixtask</h1>
+      {tasks.map((task, index) => (
         <input
+          key={index}
           type="text"
-          className="flex-1 p-2 text-black rounded-1 text-white"
-          placeholder="Add a task..."
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
+          value={task}
+          onChange={(e) => handleInputChange(index, e.target.value)}
+          className="w-64 p-2 border boder-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder={`Task ${index + 1}`}
         />
-        <button
-          className="bg-blue-500 px-4 py-2 rounded-r hover:bg-blue-700"
-          onClick={addTask}
-          disabled={tasks.length >= 6}
-        >
-          Add
-        </button>
-      </div>
-      <ul>
-        {tasks.map((task, index) => (
-          <li
-            key={index}
-            className="flex justify-between items-center bg-gray-800 p-2 rounded mb-2"
-          >
-            <span>{task}</span>
-            <button
-              className="text-red-500 hover:text-red-700  "
-              onClick={() => removeTask(index)}
-            >
-              X
-            </button>
-          </li>
-        ))}
-      </ul>
-      {tasks.length >= 6 && (
-        <p className="text-sm text-yellow-400 mt-2">Max 6 tasks allowed</p>
-      )}
+      ))}
     </div>
   );
-};
-
-export default TaskPage;
+}

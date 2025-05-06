@@ -3,7 +3,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Login from "./components/spotify/Login";
 import Dashboard from "./components/spotify/Dashboard";
-import NewTaskPage from "./components/NewTaskPage";
+import TaskPage from "./components/TaskPage";
 import TimerSelector from "./components/clock/TimeSelector";
 import FileExplorer from "./FileExplorer";
 
@@ -29,7 +29,7 @@ function App() {
         </nav>
       </div>
       <Routes>
-        <Route path="/" element={<NewTaskPage />} />
+        <Route path="/" element={<TaskPage />} />
         <Route path="/timer" element={<TimerSelector />} />
         <Route path="/dashboard" element={<Dashboard code={code} />} />
         <Route path="/login" element={<Login />} />
