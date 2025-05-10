@@ -14,31 +14,43 @@ function App() {
   // return code ? <Dashboard code={code} /> : <Login />;
 
   return (
-    <BrowserRouter>
-      <div>
-        <nav className="flex justify-center space-between gap-8">
-          <Link to="/">Tasks</Link>
-          <Link to="/timer">Timer</Link>
-          {/* conditionally display Dashboard or Login link */}
-          {code ? (
-            <Link to="/dashboard">Dashboard</Link>
-          ) : (
-            <Link to="/login">Login</Link>
-          )}
-          <Link to="/files">Files</Link>
-        </nav>
+    <div className="flex h-screen bg-blue-300 items-center">
+      <div className="flex items-center justify-center bg-green-500">
+        <TimerSelector />
       </div>
-      <Routes>
-        <Route path="/" element={<TaskPage />} />
-        <Route path="/timer" element={<TimerSelector />} />
-        <Route path="/dashboard" element={<Dashboard code={code} />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/files" element={<FileExplorer />} />
+      <div className="flex grow items-center justify-center bg-blue-600">
+        <TaskPage />
+      </div>
+      <div className="flex h-1/2 w-1/4 bg-red-500 items-center justify-center overflow-y-auto">
+        {code ? <Dashboard code={code} /> : <Login />}
+      </div>
+    </div>
 
-        {/* fallback route */}
-        <Route path="*" element={<Login />} />
-      </Routes>
-    </BrowserRouter>
+    // <BrowserRouter>
+    //   <div>
+    //     <nav className="flex justify-center space-between gap-8">
+    //       <Link to="/">Tasks</Link>
+    //       <Link to="/timer">Timer</Link>
+    //       {/* conditionally display Dashboard or Login link */}
+    //       {code ? (
+    //         <Link to="/dashboard">Dashboard</Link>
+    //       ) : (
+    //         <Link to="/login">Login</Link>
+    //       )}
+    //       <Link to="/files">Files</Link>
+    //     </nav>
+    //   </div>
+    //   <Routes>
+    //     <Route path="/" element={<TaskPage />} />
+    //     <Route path="/timer" element={<TimerSelector />} />
+    //     <Route path="/dashboard" element={<Dashboard code={code} />} />
+    //     <Route path="/login" element={<Login />} />
+    //     <Route path="/files" element={<FileExplorer />} />
+
+    //     {/* fallback route */}
+    //     <Route path="*" element={<Login />} />
+    //   </Routes>
+    // </BrowserRouter>
   );
 }
 

@@ -41,7 +41,7 @@ export default function Dashboard({ code }: { code: any }) {
 
       // find smallest album image to use in search results
       setSearchResults(
-        res.body.tracks.items.map((track: any) => {
+        res.body.tracks.items.slice(0, 3).map((track: any) => {
           const smallestAlbumImage = track.album.images.reduce(
             (smallest: any, image: any) => {
               if (image.height < smallest.height) return image;
@@ -68,10 +68,7 @@ export default function Dashboard({ code }: { code: any }) {
 
   return (
     <div>
-      <Container
-        className="d-flex flex-column py-2"
-        style={{ height: "100vh" }}
-      >
+      <Container className="d-flex flex-column py-2" style={{ height: "100%" }}>
         <Form.Control
           type="search"
           placeholder="Search..."

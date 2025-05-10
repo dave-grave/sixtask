@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import * as motion from "motion/react-client";
+import TaskElement from "./TaskElement";
 
 export default function TaskPage() {
   const [tasks, setTasks] = useLocalStorage<string[]>("tasks", []);
@@ -29,7 +29,10 @@ export default function TaskPage() {
   return (
     <div className="flex flex-col items-center justify-around py-4 min-h-screen">
       <h1 className="text-xl font-bold">sixtask</h1>
-      <motion.div style={box} animate={{ rotate: 360 }} />
+      <div className="flex flex-col justify-between items-center gap-4 w-full">
+        <TaskElement name="timer" />
+        <TaskElement name="spotify" />
+      </div>
       {tasks.map((task, index) => (
         <input
           key={index}
