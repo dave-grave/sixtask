@@ -1,5 +1,5 @@
 import React from "react";
 
 export default function Footer() {
-  return <div>Footer</div>;
+  return <div className="m-12">Settings | Login</div>;
 }
