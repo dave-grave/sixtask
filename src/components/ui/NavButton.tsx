@@ -3,23 +3,26 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 
-export default function NavButton() {
+type NavPage = "tasks" | "timer" | "spotify" | "dashboard";
+
+export default function NavButton({ page }: { page: string }) {
   const [isPressed, setPressed] = useState(false);
+  const [currentPage, setCurrentPage] = useState<NavPage>("tasks");
 
   const box = {
     width: 50,
     height: 50,
-    backgroundColor: isPressed ? "#9911ff" : "#000000",
+    backgroundColor: isPressed ? "#1C1C84" : "#D3D3D3",
     borderRadius: 5,
   };
 
   const handleButtonPress = () => {
     isPressed ? setPressed(false) : setPressed(true);
+    if (!isPressed) {
+      console.log("pressed", page);
+      // setCurrentPage(page);
+    }
   };
-
-  useEffect(() => {
-    console.log(isPressed);
-  }, [isPressed]);
 
   return (
     <div>
