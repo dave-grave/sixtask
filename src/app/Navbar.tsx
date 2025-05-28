@@ -9,6 +9,7 @@ export default function Navbar() {
   const [currentPage, setCurrentPage] = useState<NavPage>("tasks");
 
   const handleNavigation = (page: NavPage) => {
+    console.log("page");
     setCurrentPage(page);
   };
 
