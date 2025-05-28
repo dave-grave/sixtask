@@ -8,12 +8,20 @@ type NavPage = "tasks" | "timer" | "spotify" | "dashboard";
 export default function Navbar() {
   const [currentPage, setCurrentPage] = useState<NavPage>("tasks");
 
+  const handleNavigation = (page: NavPage) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className="flex mt-2 gap-4">
-      <NavButton page="tasks" />
-      <NavButton page="timer" />
-      <NavButton page="spotify" />
-      <NavButton page="dashboard" />
+      {(["tasks", "timer", "spotify", "dashboard"] as NavPage[]).map((page) => (
+        <NavButton
+          key={page}
+          page={page}
+          isActive={currentPage === page}
+          onClick={() => handleNavigation(page)}
+        />
+      ))}
     </div>
   );
 }

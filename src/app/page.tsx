@@ -3,6 +3,7 @@
 import { motion } from "motion/react";
 import Header from "./Header";
 import Tasks from "./Tasks";
+import Timer from "./Timer";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
