@@ -2,15 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
-
-type NavPage = "tasks" | "timer" | "spotify" | "dashboard";
+import { NavPageType } from "@/app/home/page";
 
 export default function NavButton({
   page,
   isActive,
   onClick,
 }: {
-  page: NavPage;
+  page: NavPageType;
   isActive: boolean;
   onClick: () => void;
 }) {

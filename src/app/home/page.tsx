@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
-import Header from "./home/Header";
-import Content from "./home/Content";
-import Navbar from "./home/Navbar";
-import Footer from "./home/Footer";
+import Header from "./Header";
+import Footer from "./Footer";
+import Navbar from "./Navbar";
+import Content from "./Content";
 
 export type NavPageType = "tasks" | "timer" | "spotify" | "dashboard";
 

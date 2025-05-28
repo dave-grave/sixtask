@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import TaskInput from "./TaskInput";
+import TaskInput from "../ui/TaskInput";
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<string[]>(["", "", "", "", "", ""]);
