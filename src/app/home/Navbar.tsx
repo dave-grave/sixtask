@@ -12,7 +12,7 @@ export default function Navbar({
   handleNavigation: (page: NavPageType) => void;
 }) {
   return (
-    <div className="flex mt-2 gap-4">
+    <div className="flex justify-center mt-2 gap-4">
       {(["tasks", "timer", "spotify", "dashboard"] as NavPageType[]).map(
         (page) => (
           <NavButton

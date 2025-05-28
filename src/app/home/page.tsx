@@ -17,16 +17,22 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen items-center justify-center">
+    <div className="flex flex-col gap-6 min-h-screen items-center justify-center">
       <Header />
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.7, ease: "easeOut" }}
-      >
-        <Content currentPage={currentPage} />
-        <Navbar currentPage={currentPage} handleNavigation={handleNavigation} />
-      </motion.div>
+      <div className="flex flex-col justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.7, ease: "easeOut" }}
+          className="flex flex-col gap-12"
+        >
+          <Content currentPage={currentPage} />
+          <Navbar
+            currentPage={currentPage}
+            handleNavigation={handleNavigation}
+          />
+        </motion.div>
+      </div>
       <Footer />
     </div>
   );

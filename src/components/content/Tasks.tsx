@@ -13,7 +13,7 @@ export default function Tasks() {
   };
 
   return (
-    <div className="flex flex-1 mb-6 flex-col justify-around">
+    <div className="flex flex-col justify-between ">
       {tasks.map((task, idx) => (
         <TaskInput
           key={idx}

@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
 export default function Login() {
@@ -7,6 +8,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -16,8 +18,12 @@ export default function Login() {
       email,
       password,
     });
-    if (error) setError(error.message);
     setLoading(false);
+    if (error) {
+      setError(error.message);
+    } else {
+      router.push("/home");
+    }
   };
 
   return (
