@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import Tasks from "../../components/content/Tasks";
-import Timer from "../../components/content/Timer";
+import Timer from "../../components/content/timer/Timer";
 import Spotify from "@/components/content/Spotify";
 import Dashboard from "@/components/content/Dashboard";
 import { NavPageType } from "@/app/home/page";
