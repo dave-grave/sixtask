@@ -37,6 +37,7 @@ export default function Timer() {
   const handleEdit = () => {
     setIsEditing(true);
     setInputValue(formatTime(duration));
+    console.log(duration);
     setIsPlaying(false);
   };
 
@@ -62,7 +63,7 @@ export default function Timer() {
     setDuration(newDuration);
     setTimerKey((prev) => prev + 1);
     setIsEditing(false);
-    setIsPlaying(false);
+    setIsPlaying(true);
   };
   const handleInputBlur = () => {
     applyDuration();

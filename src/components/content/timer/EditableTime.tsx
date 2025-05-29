@@ -56,7 +56,6 @@ export default function EditableTime({
     field: "hours" | "minutes" | "seconds",
     value: string
   ) => {
-    console.log(field, value);
     onInputChange(field, value.replace(/\D/, ""));
     if (field === "seconds" && value.length === 2 && minRef.current) {
       minRef.current.focus();
