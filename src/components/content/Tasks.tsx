@@ -15,6 +15,7 @@ export default function Tasks() {
       const { data, error } = await supabase.auth.getUser();
       if (data?.user) {
         setUserId(data.user.id);
+        // console.log(data.user.id);
         const { data: tasksData, error: tasksError } = await supabase
           .from("tasks")
           .select("tasks")
