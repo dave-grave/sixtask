@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 
-// Helper to format seconds as hh:mm:ss
+// helper to format seconds as hh:mm:ss string
 function formatTime(totalSeconds: number) {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -39,30 +39,29 @@ export default function TimerChildren({
   const [inputValue, setInputValue] = useState(formatTime(duration));
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // focus the input when in edit mode
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
     }
   }, [isEditing]);
 
+  // if we leave edit mode or when timer ticks, update inputValue
   useEffect(() => {
     if (!isEditing) setInputValue(formatTime(remainingTime));
   }, [remainingTime, isEditing]);
 
-  const handleEditTime = () => {
+  const handleInputEdit = () => {
     setIsEditing(true);
     setIsPlaying(false);
     inputRef?.current?.focus();
-  };
-
-  const handleUneditTime = () => {
-    setIsEditing(false);
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
+  // update duration when input changes
   const applyInput = () => {
     const newDuration = parseTimeString(inputValue);
     if (newDuration > 0) {
@@ -83,10 +82,9 @@ export default function TimerChildren({
   };
 
   return (
-    // parse into hh:mm:ss format with enforced 2 digits
     <span
       className="flex flex-col w-1/2 items-center hover:cursor-pointer font-bold text-2xl"
-      onClick={!isEditing ? handleEditTime : undefined}
+      onClick={!isEditing ? handleInputEdit : undefined}
     >
       {isEditing ? (
         <input
