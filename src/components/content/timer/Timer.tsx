@@ -8,9 +8,13 @@ const timerProps = {
 };
 
 export default function Timer() {
+  // clock variables
   const [isPlaying, setIsPlaying] = useState(false);
   const [duration, setDuration] = useState(3661);
   const [timerKey, setTimerKey] = useState(0);
+
+  // track elapsed time
+  const [elapsedTime, setElapsedTime] = useState(0);
 
   // variables to track study mode
   const [mode, setMode] = useState<"study" | "break">("study");
@@ -46,53 +50,6 @@ export default function Timer() {
     setIsPlaying(false);
     setDuration(duration);
     setTimerKey((prev) => prev + 1);
-  };
-
-  const [isEditing, setIsEditing] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    if (isEditing && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isEditing]);
-  // text that goes in the middle of the timer circle
-  const children = ({ remainingTime }: { remainingTime: number }) => {
-    const hours = Math.floor(remainingTime / 3600);
-    const minutes = Math.floor((remainingTime % 3600) / 60);
-    const seconds = remainingTime % 60;
-
-    const handleEditTime = () => {
-      setIsEditing(true);
-      setIsPlaying(false);
-      inputRef?.current?.focus();
-      console.log(inputRef);
-    };
-
-    const handleUneditTime = () => {
-      setIsEditing(false);
-    };
-
-    return (
-      // parse into hh:mm:ss format with enforced 2 digits
-      <span
-        className="flex flex-col items-center hover:cursor-pointer font-bold text-2xl"
-        onClick={handleEditTime}
-        onBlur={handleUneditTime}
-      >
-        {isEditing ? (
-          <input
-            ref={inputRef}
-            className="border border-gray-300 rounded w-1/2"
-          />
-        ) : (
-          [
-            hours.toString().padStart(2, "0"),
-            minutes.toString().padStart(2, "0"),
-            seconds.toString().padStart(2, "0"),
-          ].join(":")
-        )}
-      </span>
-    );
   };
 
   return (
