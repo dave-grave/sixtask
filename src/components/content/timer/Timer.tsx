@@ -19,6 +19,7 @@ export default function Timer() {
 
   // track elapsed time using a stopwatch
   const [stopwatch, setStopwatch] = useState(0);
+  const [elapsedTime, setElapsedTime] = useState(0);
   const [isEditing, setIsEditing] = useState(false); // pass into timerchildren
 
   function formatTimeString(totalSeconds: number) {
@@ -37,6 +38,7 @@ export default function Timer() {
     if (!isEditing && isPlaying) {
       const interval = setInterval(() => {
         setStopwatch((prev) => prev + 1);
+        setElapsedTime((prev) => prev + 1);
       }, 1000);
       return () => clearInterval(interval);
     }
@@ -74,14 +76,16 @@ export default function Timer() {
   // update timer key to allow timer reset
   const handleReset = () => {
     setIsPlaying(false);
+    setStopwatch(0);
     setDuration(duration);
     setTimerKey((prev) => prev + 1);
   };
 
   // set timer context to supabase
-  const { getTimer, insertTimer } = useTimerContext();
+  const { getTimer, insertTimer, updateTimer } = useTimerContext();
   const [timerData, setTimerData] = useState<TimerType | null>(null);
 
+  // fetch timer data
   useEffect(() => {
     const fetchTimer = async () => {
       await insertTimer(); // upsert default timer if not in db (first sign-on)
@@ -91,16 +95,48 @@ export default function Timer() {
     fetchTimer();
   }, []);
 
+  // set timer data
   useEffect(() => {
     const timer = Array.isArray(timerData) ? timerData[0] : timerData;
-    setIsPlaying(timer.isPlaying || false);
-    setDuration(timer.duration || 900);
-    setTimerKey(timer.timerKey || 0);
-    setStopwatch(timer.stopwatch || 0);
-    setMode(timer.mode || "study");
-    setNumStudy(timer.numStudy || 0);
-    setNumBreak(timer.numBreak || 0);
+    setIsPlaying(timer?.isPlaying ?? false);
+    setDuration(timer?.duration ?? 900);
+    setTimerKey(timer?.timerKey ?? 0);
+    setStopwatch(timer?.stopwatch ?? 0);
+    setMode(timer?.mode ?? "study");
+    setNumStudy(timer?.numStudy ?? 0);
+    setNumBreak(timer?.numBreak ?? 0);
+    setTimerData(timer);
   }, [timerData]);
+
+  // update timer data
+  useEffect(() => {
+    if (!timerData) return;
+
+    const updatedTimer = {
+      ...timerData,
+      isPlaying,
+      duration,
+      timerKey,
+      stopwatch,
+      mode,
+      numStudy,
+      numBreak,
+      isEditing,
+      remainingTime: Math.max(duration - stopwatch, 0),
+    };
+    console.log(updatedTimer);
+    setTimerData(updatedTimer);
+    updateTimer(updatedTimer);
+  }, [
+    isPlaying,
+    duration,
+    timerKey,
+    stopwatch,
+    mode,
+    numStudy,
+    numBreak,
+    isEditing,
+  ]);
 
   return (
     <div className="flex flex-col justify-center items-center">
@@ -108,12 +144,12 @@ export default function Timer() {
         {mode === "study" ? `Study Time ${numStudy}` : `Break Time ${numBreak}`}
       </p>
       <p className="p-2 text-center text-lg">
-        Time Elapsed: {formatTimeString(stopwatch)}
+        Time Elapsed: {formatTimeString(elapsedTime)}
       </p>
       <CountdownCircleTimer
         key={timerKey}
         isPlaying={isPlaying}
-        duration={duration || duration}
+        duration={duration}
         onComplete={handleComplete}
         colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
         colorsTime={[duration, (duration * 2) / 3, duration / 3, 0]}
