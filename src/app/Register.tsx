@@ -29,7 +29,6 @@ export default function Register() {
   };
 
   const closeModal = () => {
-    console.log("clicked");
     setShowModal(false);
     setError(null);
     setSuccess(null);
