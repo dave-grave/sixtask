@@ -12,3 +12,7 @@ spotify api links:
 react countdown timer component:
 
 - https://github.com/vydimitrov/react-countdown-circle-timer/tree/master/packages/web
+
+other cool components:
+
+- https://21st.dev/react-bits/splash-cursor/default
