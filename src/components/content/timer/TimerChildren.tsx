@@ -39,6 +39,11 @@ export default function TimerChildren({
 }) {
   const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(formatTime(duration));
+  const prevInputValue = useRef<{
+    hours: string;
+    minutes: string;
+    seconds: string;
+  } | null>(null);
   const hourRef = useRef<HTMLInputElement>(null);
   const minRef = useRef<HTMLInputElement>(null);
   const secRef = useRef<HTMLInputElement>(null);
@@ -57,17 +62,21 @@ export default function TimerChildren({
     }, 10);
   };
 
-  const handleInputFocus = () => {
+  const handleInputFocus = (field: "hours" | "minutes" | "seconds") => {
     if (blurTimeout.current) {
       clearTimeout(blurTimeout.current);
       blurTimeout.current = null;
     }
+    if (field === "hours" && hourRef.current) hourRef.current.select();
+    if (field === "minutes" && minRef.current) minRef.current.select();
+    if (field === "seconds" && secRef.current) secRef.current.select();
   };
 
   // focus the hour input when in edit mode
   useEffect(() => {
     if (isEditing && hourRef.current) {
       hourRef.current.focus();
+      hourRef.current.select();
     }
   }, [isEditing]);
 
@@ -79,6 +88,7 @@ export default function TimerChildren({
   const handleInputEdit = () => {
     setIsEditing(true);
     setIsPlaying(false);
+    prevInputValue.current = { ...inputValue };
     // hourRef?.current?.focus();
   };
 
@@ -91,14 +101,37 @@ export default function TimerChildren({
     setInputValue((prev) => ({ ...prev, [field]: value }));
 
     if (value.length === 2) {
-      if (field === "hours" && minRef.current) minRef.current.focus();
-      if (field === "minutes" && secRef.current) secRef.current.focus();
+      if (field === "hours" && minRef.current) {
+        minRef.current.focus();
+        minRef.current.select();
+      }
+      if (field === "minutes" && secRef.current) {
+        secRef.current.focus();
+        secRef.current.select();
+      }
     }
   };
 
   // update duration when input changes
   const applyInput = () => {
+    // check if input hasn't changed, treat like pausing the clock.
+    const prev = prevInputValue.current;
+    const curr = inputValue;
+    const unchanged =
+      prev &&
+      prev.hours === curr.hours &&
+      prev.minutes === curr.minutes &&
+      prev.seconds === curr.seconds;
+    if (unchanged) {
+      setIsEditing(false);
+      return;
+    }
+
+    // otherwise, reset the clock progress bar.
     const newDuration = parseTimeObj(inputValue);
+    if (inputValue.hours == prevInputValue?.current?.hours) {
+      console.log("prev was same");
+    }
     if (newDuration > 0) {
       setDuration(newDuration);
       setTimerKey((prev) => prev + 1);
@@ -126,8 +159,14 @@ export default function TimerChildren({
     }
 
     if (e.key === "ArrowLeft") {
-      if (field === "seconds" && minRef.current) minRef.current.focus();
-      if (field === "minutes" && hourRef.current) hourRef.current.focus();
+      if (field === "seconds" && minRef.current) {
+        minRef.current.focus();
+        minRef.current.select();
+      }
+      if (field === "minutes" && hourRef.current) {
+        hourRef.current.focus();
+        hourRef.current.select();
+      }
     }
   };
 
@@ -146,7 +185,7 @@ export default function TimerChildren({
             onChange={(e) => handleInputChange("hours", e.target.value)}
             onKeyDown={(e) => handleInputKeyDown(e, "hours")}
             onBlur={handleInputBlur}
-            onFocus={handleInputFocus}
+            onFocus={() => handleInputFocus("hours")}
             placeholder="hh"
             maxLength={2}
           />
@@ -158,7 +197,7 @@ export default function TimerChildren({
             onChange={(e) => handleInputChange("minutes", e.target.value)}
             onKeyDown={(e) => handleInputKeyDown(e, "minutes")}
             onBlur={handleInputBlur}
-            onFocus={handleInputFocus}
+            onFocus={() => handleInputFocus("minutes")}
             placeholder="mm"
             maxLength={2}
             inputMode="numeric"
@@ -171,7 +210,7 @@ export default function TimerChildren({
             onChange={(e) => handleInputChange("seconds", e.target.value)}
             onKeyDown={(e) => handleInputKeyDown(e, "seconds")}
             onBlur={handleInputBlur}
-            onFocus={handleInputFocus}
+            onFocus={() => handleInputFocus("seconds")}
             placeholder="ss"
             maxLength={2}
             inputMode="numeric"
