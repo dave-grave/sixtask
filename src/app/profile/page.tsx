@@ -1,19 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { useAuth } from "../context/AuthContext";
 
 export default function Profile() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+  const { user } = useAuth();
 
   const handleEmail = async () => {
     setLoading(true);
-    const { data, error } = await supabase.auth.getUser();
-    if (error) {
-      console.log(error.message);
-    } else {
-      setEmail(data.user.email ?? "");
-    }
+    setEmail(user?.email ?? "");
     setLoading(false);
   };
 
