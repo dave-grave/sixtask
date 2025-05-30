@@ -30,14 +30,17 @@ export default function TimerChildren({
   duration,
   setDuration,
   setTimerKey,
+  isEditing,
+  setIsEditing,
 }: {
   remainingTime: number;
   setIsPlaying: (state: boolean) => void;
   duration: number;
   setDuration: (duration: number) => void;
   setTimerKey: React.Dispatch<React.SetStateAction<number>>;
+  isEditing: boolean;
+  setIsEditing: (val: boolean) => void;
 }) {
-  const [isEditing, setIsEditing] = useState(false);
   const [inputValue, setInputValue] = useState(formatTime(duration));
   const prevInputValue = useRef<{
     hours: string;
@@ -82,14 +85,15 @@ export default function TimerChildren({
 
   // if we leave edit mode or when timer ticks, update inputValue
   useEffect(() => {
-    if (!isEditing) setInputValue(formatTime(remainingTime));
+    if (!isEditing) {
+      setInputValue(formatTime(remainingTime));
+    }
   }, [remainingTime, isEditing]);
 
   const handleInputEdit = () => {
     setIsEditing(true);
     setIsPlaying(false);
     prevInputValue.current = { ...inputValue };
-    // hourRef?.current?.focus();
   };
 
   const handleInputChange = (

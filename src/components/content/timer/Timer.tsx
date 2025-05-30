@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import TimerChildren from "./TimerChildren";
@@ -10,11 +12,22 @@ const timerProps = {
 export default function Timer() {
   // clock variables
   const [isPlaying, setIsPlaying] = useState(false);
-  const [duration, setDuration] = useState(3661);
+  const [duration, setDuration] = useState(900);
   const [timerKey, setTimerKey] = useState(0);
 
-  // track elapsed time
-  const [elapsedTime, setElapsedTime] = useState(0);
+  // track elapsed time using a stopwatch
+  const [stopwatch, setStopwatch] = useState(0);
+  const [isEditing, setIsEditing] = useState(false); // pass into timerchildren
+
+  // update stopwatch
+  useEffect(() => {
+    if (!isEditing && isPlaying) {
+      const interval = setInterval(() => {
+        setStopwatch((prev) => prev + 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [isEditing, isPlaying]);
 
   // variables to track study mode
   const [mode, setMode] = useState<"study" | "break">("study");
@@ -57,6 +70,7 @@ export default function Timer() {
       <p className="p-2 text-center text-lg">
         {mode === "study" ? `Study Time ${numStudy}` : `Break Time ${numBreak}`}
       </p>
+      <p className="p-2 text-center text-lg">Time Elapsed (s): {stopwatch}</p>
       <CountdownCircleTimer
         key={timerKey}
         isPlaying={isPlaying}
@@ -66,15 +80,19 @@ export default function Timer() {
         colorsTime={[duration, (duration * 2) / 3, duration / 3, 0]}
         {...timerProps}
       >
-        {({ remainingTime }) => (
-          <TimerChildren
-            remainingTime={remainingTime}
-            setIsPlaying={setIsPlaying}
-            duration={duration}
-            setDuration={setDuration}
-            setTimerKey={setTimerKey}
-          />
-        )}
+        {({ remainingTime }) => {
+          return (
+            <TimerChildren
+              remainingTime={remainingTime}
+              setIsPlaying={setIsPlaying}
+              duration={duration}
+              setDuration={setDuration}
+              setTimerKey={setTimerKey}
+              isEditing={isEditing}
+              setIsEditing={setIsEditing}
+            />
+          );
+        }}
       </CountdownCircleTimer>
 
       <button
