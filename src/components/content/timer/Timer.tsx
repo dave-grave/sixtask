@@ -12,6 +12,31 @@ export default function Timer() {
   const [duration, setDuration] = useState(3661);
   const [timerKey, setTimerKey] = useState(0);
 
+  // variables to track study mode
+  const [mode, setMode] = useState<"study" | "break">("study");
+  const [numStudy, setNumStudy] = useState(0);
+  const [numBreak, setNumBreak] = useState(0);
+  const studyDuration = 1500;
+  const breakDuration = 300;
+
+  // TODO: add a "reset" state to animate the progress bar
+  // going all the way back up the opposite direction
+  const handleComplete = () => {
+    if (mode === "study") {
+      setMode("break");
+      setDuration(breakDuration);
+      setNumStudy((prev) => prev + 1);
+    } else {
+      setMode("study");
+      setDuration(studyDuration);
+      setNumBreak((prev) => prev + 1);
+    }
+    setTimerKey((prev) => prev + 1);
+    setIsPlaying(true);
+    return { shouldRepeat: false };
+  };
+
+  // play/pause button
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
   };
@@ -72,10 +97,14 @@ export default function Timer() {
 
   return (
     <div className="flex flex-col justify-center items-center">
+      <p className="p-2 text-center text-lg">
+        {mode === "study" ? `Study Time ${numStudy}` : `Break Time ${numBreak}`}
+      </p>
       <CountdownCircleTimer
         key={timerKey}
         isPlaying={isPlaying}
         duration={duration}
+        onComplete={handleComplete}
         colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
         colorsTime={[duration, (duration * 2) / 3, duration / 3, 0]}
         {...timerProps}

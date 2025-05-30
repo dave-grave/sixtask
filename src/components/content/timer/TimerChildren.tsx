@@ -129,9 +129,6 @@ export default function TimerChildren({
 
     // otherwise, reset the clock progress bar.
     const newDuration = parseTimeObj(inputValue);
-    if (inputValue.hours == prevInputValue?.current?.hours) {
-      console.log("prev was same");
-    }
     if (newDuration > 0) {
       setDuration(newDuration);
       setTimerKey((prev) => prev + 1);
