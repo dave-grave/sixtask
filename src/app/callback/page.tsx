@@ -8,10 +8,18 @@ export default function Callback() {
 
   useEffect(() => {
     const code = searchParams.get("code");
+
+    // send unique code to supabase backend edge function
     if (code) {
-      console.log(code);
+      fetch("/api/spotify-exchange", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code }),
+      }).then(() => {
+        // redirect when done
+        router.replace("/home");
+      });
     }
-    router.replace("/home");
   }, [searchParams, router]);
   return <div>connecting to spotify</div>;
 }
