@@ -16,7 +16,6 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
 
   const getTimer = async () => {
     if (!user) throw new Error("No user found");
-
     const { data, error } = await supabase
       .from("timer")
       .select()

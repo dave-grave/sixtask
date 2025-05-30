@@ -1,3 +1,4 @@
+// helper type for Timer.tsx
 export type TimerType = {
   user_id: string;
   stopwatch: number;

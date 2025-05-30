@@ -80,18 +80,27 @@ export default function Timer() {
 
   // set timer context to supabase
   const { getTimer, insertTimer } = useTimerContext();
-  const [timer, setTimer] = useState<TimerType | null>(null);
+  const [timerData, setTimerData] = useState<TimerType | null>(null);
 
   useEffect(() => {
     const fetchTimer = async () => {
-      // insert default timer if it does not already exist in db (first sign-on)
-      await insertTimer();
-
-      const timerData = await getTimer();
-      setTimer(timerData);
+      await insertTimer(); // upsert default timer if not in db (first sign-on)
+      const data = await getTimer();
+      setTimerData(data);
     };
     fetchTimer();
   }, []);
+
+  useEffect(() => {
+    const timer = Array.isArray(timerData) ? timerData[0] : timerData;
+    setIsPlaying(timer.isPlaying || false);
+    setDuration(timer.duration || 900);
+    setTimerKey(timer.timerKey || 0);
+    setStopwatch(timer.stopwatch || 0);
+    setMode(timer.mode || "study");
+    setNumStudy(timer.numStudy || 0);
+    setNumBreak(timer.numBreak || 0);
+  }, [timerData]);
 
   return (
     <div className="flex flex-col justify-center items-center">
@@ -104,7 +113,7 @@ export default function Timer() {
       <CountdownCircleTimer
         key={timerKey}
         isPlaying={isPlaying}
-        duration={duration}
+        duration={duration || duration}
         onComplete={handleComplete}
         colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
         colorsTime={[duration, (duration * 2) / 3, duration / 3, 0]}
