@@ -3,7 +3,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import TimerChildren from "./TimerChildren";
-import { format } from "path";
+import { useTimerContext } from "@/app/context/TimerContext";
+import { TimerType } from "@/types";
 
 const timerProps = {
   size: 300,
@@ -76,6 +77,21 @@ export default function Timer() {
     setDuration(duration);
     setTimerKey((prev) => prev + 1);
   };
+
+  // set timer context to supabase
+  const { getTimer, insertTimer } = useTimerContext();
+  const [timer, setTimer] = useState<TimerType | null>(null);
+
+  useEffect(() => {
+    const fetchTimer = async () => {
+      // insert default timer if it does not already exist in db (first sign-on)
+      await insertTimer();
+
+      const timerData = await getTimer();
+      setTimer(timerData);
+    };
+    fetchTimer();
+  }, []);
 
   return (
     <div className="flex flex-col justify-center items-center">

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "./context/AuthContext";
 import { TaskProvider } from "./context/TaskContext";
+import { TimerProvider } from "./context/TimerContext";
 
 export const metadata: Metadata = {
   title: "sixtask",
@@ -17,7 +18,9 @@ export default function RootLayout({
     <html lang="en">
       <AuthProvider>
         <TaskProvider>
-          <body>{children}</body>
+          <TimerProvider>
+            <body>{children}</body>
+          </TimerProvider>
         </TaskProvider>
       </AuthProvider>
     </html>

@@ -16,25 +16,44 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
 
   const getTimer = async () => {
     if (!user) throw new Error("No user found");
-    await supabase.from("timer").select("*").eq("user_id", user.id).single();
+
+    const { data, error } = await supabase
+      .from("timer")
+      .select()
+      .eq("user_id", user.id);
+    return data;
   };
 
   const insertTimer = async () => {
     if (!user) throw new Error("No user found");
-    await supabase.from("timer").insert([
-      {
-        user_id: user.id,
-        stopwatch: 0,
-        duration: 1500,
-        remainingTime: 1500,
-        mode: "study",
-        numStudy: 0,
-        numBreak: 0,
-        isPlaying: false,
-        isEditing: false,
-        timerKey: 0,
-      },
-    ]);
+
+    // if it's user's first time using clock, create default timer
+    const { data, error } = await supabase
+      .from("timer")
+      .upsert(
+        [
+          {
+            user_id: user.id,
+            stopwatch: 0,
+            duration: 1500,
+            remainingTime: 1500,
+            mode: "study",
+            numStudy: 0,
+            numBreak: 0,
+            isPlaying: false,
+            isEditing: false,
+            timerKey: 0,
+          },
+        ],
+        { ignoreDuplicates: true }
+      )
+      .select();
+
+    if (error) {
+      console.error("Upsert error:", error);
+      throw error;
+    }
+    return data;
   };
 
   return (

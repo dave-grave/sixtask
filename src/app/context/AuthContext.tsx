@@ -26,6 +26,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
     getSession();
 
+    // TODO: understand this
     // Listen for auth state changes
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
@@ -33,6 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     );
 
+    // TODO: understand this
     // Cleanup the listener on unmount
     return () => {
       listener?.subscription.unsubscribe();
