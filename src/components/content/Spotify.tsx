@@ -1,5 +1,18 @@
-import React from "react";
+"use client";
+import React, { useEffect } from "react";
+import { useSpotifyContext } from "@/app/context/SpotifyContext";
 
 export default function Spotify() {
-  return <div>Spotify</div>;
+  const { profile, getProfile, authUrl } = useSpotifyContext();
+
+  useEffect(() => {
+    getProfile();
+  }, []);
+
+  return (
+    <div>
+      <a href={authUrl}>connect with spotify</a>
+      {profile ? <pre>{JSON.stringify(profile, null, 2)}</pre> : <p>loading</p>}
+    </div>
+  );
 }

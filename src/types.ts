@@ -11,3 +11,10 @@ export type TimerType = {
   isEditing: boolean;
   timerKey: number;
 };
+
+// spotifyContext.tsx
+export type SpotifyContextType = {
+  profile: any;
+  getProfile: () => Promise<void>;
+  authUrl: string;
+};

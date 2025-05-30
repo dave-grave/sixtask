@@ -3,6 +3,7 @@ import "./globals.css";
 import { AuthProvider } from "./context/AuthContext";
 import { TaskProvider } from "./context/TaskContext";
 import { TimerProvider } from "./context/TimerContext";
+import { SpotifyProvider } from "./context/SpotifyContext";
 
 export const metadata: Metadata = {
   title: "sixtask",
@@ -19,7 +20,9 @@ export default function RootLayout({
       <AuthProvider>
         <TaskProvider>
           <TimerProvider>
-            <body>{children}</body>
+            <SpotifyProvider>
+              <body>{children}</body>
+            </SpotifyProvider>
           </TimerProvider>
         </TaskProvider>
       </AuthProvider>
