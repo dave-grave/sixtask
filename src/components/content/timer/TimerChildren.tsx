@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 
-// helper to format seconds as hh:mm:ss string
-function formatTime(totalSeconds: number) {
+// helper to format seconds as hh:mm:ss object
+function formatTimeObj(totalSeconds: number) {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
@@ -41,7 +41,7 @@ export default function TimerChildren({
   isEditing: boolean;
   setIsEditing: (val: boolean) => void;
 }) {
-  const [inputValue, setInputValue] = useState(formatTime(duration));
+  const [inputValue, setInputValue] = useState(formatTimeObj(duration));
   const prevInputValue = useRef<{
     hours: string;
     minutes: string;
@@ -86,7 +86,7 @@ export default function TimerChildren({
   // if we leave edit mode or when timer ticks, update inputValue
   useEffect(() => {
     if (!isEditing) {
-      setInputValue(formatTime(remainingTime));
+      setInputValue(formatTimeObj(remainingTime));
     }
   }, [remainingTime, isEditing]);
 

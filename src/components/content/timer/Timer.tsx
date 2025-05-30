@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import TimerChildren from "./TimerChildren";
+import { format } from "path";
 
 const timerProps = {
   size: 300,
@@ -18,6 +19,17 @@ export default function Timer() {
   // track elapsed time using a stopwatch
   const [stopwatch, setStopwatch] = useState(0);
   const [isEditing, setIsEditing] = useState(false); // pass into timerchildren
+
+  function formatTimeString(totalSeconds: number) {
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return [
+      hours.toString().padStart(2, "0"),
+      minutes.toString().padStart(2, "0"),
+      seconds.toString().padStart(2, "0"),
+    ].join(":");
+  }
 
   // update stopwatch
   useEffect(() => {
@@ -70,7 +82,9 @@ export default function Timer() {
       <p className="p-2 text-center text-lg">
         {mode === "study" ? `Study Time ${numStudy}` : `Break Time ${numBreak}`}
       </p>
-      <p className="p-2 text-center text-lg">Time Elapsed (s): {stopwatch}</p>
+      <p className="p-2 text-center text-lg">
+        Time Elapsed: {formatTimeString(stopwatch)}
+      </p>
       <CountdownCircleTimer
         key={timerKey}
         isPlaying={isPlaying}
