@@ -3,46 +3,40 @@
 import React, { useState, useEffect, useRef } from "react";
 import TaskInput from "../ui/TaskInput";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/app/context/AuthContext";
+import { useDb } from "@/app/context/DbContext";
 
 export default function Tasks() {
   const [tasks, setTasks] = useState<string[]>(["", "", "", "", "", ""]);
   const prevTasks = useRef<string[]>(tasks);
-  const [userId, setUserId] = useState<string | null>(null);
+  const { user } = useAuth();
+  const { getTasks, updateTask } = useDb();
 
   // get userID on mount
   useEffect(() => {
+    if (!user) return;
     const fetchData = async () => {
-      const { data, error } = await supabase.auth.getUser();
-      if (data?.user) {
-        setUserId(data.user.id);
-        // console.log(data.user.id);
-        const { data: tasksData, error: tasksError } = await supabase
-          .from("tasks")
-          .select("tasks")
-          .eq("user_id", data.user.id)
-          .single();
-        if (tasksData?.tasks) {
-          setTasks(tasksData.tasks);
-          prevTasks.current = tasksData.tasks;
-        }
-      } else {
-        setUserId(null);
+      const { data, error } = await getTasks(user.id);
+      if (data && data[0]?.tasks) {
+        setTasks(data[0].tasks);
+        prevTasks.current = data[0].tasks;
       }
     };
 
     fetchData();
-  }, []);
+  }, [user, getTasks]);
 
   // push tasks to supabase every 10s if changes occur
   useEffect(() => {
+    if (!user) return;
     const interval = setInterval(async () => {
       if (JSON.stringify(prevTasks.current) !== JSON.stringify(tasks)) {
-        await supabase.from("tasks").update({ tasks }).eq("user_id", userId);
+        await updateTask(user.id, { tasks });
         prevTasks.current = tasks;
       }
     }, 1000);
     return () => clearInterval(interval);
-  }, [tasks, userId]);
+  }, [tasks, user, updateTask]);
 
   const handleInputChange = (index: number, value: string) => {
     const updatedTasks = [...tasks];

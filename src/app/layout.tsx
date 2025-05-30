@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "./context/AuthContext";
+import { DbProvider } from "./context/DbContext";
 
 export const metadata: Metadata = {
   title: "sixtask",
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <AuthProvider>
-        <body>{children}</body>
+        <DbProvider>
+          <body>{children}</body>
+        </DbProvider>
       </AuthProvider>
     </html>
   );
