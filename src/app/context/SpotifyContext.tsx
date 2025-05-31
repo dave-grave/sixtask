@@ -19,25 +19,38 @@ export function SpotifyProvider({ children }: { children: React.ReactNode }) {
     `&redirect_uri=${encodeURIComponent(SPOTIFY_REDIRECT_URI)}` +
     `&scope=${encodeURIComponent(scopes)}`;
 
-  //   const getProfile = async () => {
-  //     if (!user) return; // fetch only if user is authenticated
-  //     const { data, error } = await supabase
-  //       .from("spotify_tokens")
-  //       .select("access_token")
-  //       .eq("user_id", user.id)
-  //       .single();
-  //     if (!data?.access_token) return;
+  const getProfile = async () => {
+    // get Supabase JWT
+    const { data } = await supabase.auth.getSession();
+    const access_token = data.session?.access_token;
+    if (!access_token) return;
 
-  //     const response = await fetch("https://api.spotify.com/v1/me", {
-  //       headers: { Authorization: "Bearer " + data.access_token },
-  //     });
-  //     if (response.ok) setProfile(await response.json());
+    // call edge function to get spotify token
+    const res = await fetch(
+      "https://jnnnzjivyiuzekcqdgnh.functions.supabase.co/spotify-get-access-token",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+      }
+    );
+    const { access_token: spotifyToken } = await res.json();
+    if (!spotifyToken) return;
 
-  //     window.location.replace("/home");
-  //   };
+    const profileRes = await fetch("https://api.spotify.com/v1/me", {
+      headers: {
+        Authorization: `Bearer ${spotifyToken}`,
+      },
+    });
+    const profileData = await profileRes.json();
+    setProfile(profileData);
+    console.log(profileData);
+  };
 
   return (
-    <SpotifyContext.Provider value={{ profile, authUrl }}>
+    <SpotifyContext.Provider value={{ profile, getProfile, authUrl }}>
       {children}
     </SpotifyContext.Provider>
   );
