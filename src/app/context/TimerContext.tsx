@@ -35,6 +35,7 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
           {
             user_id: user.id,
             duration: 1500,
+            initialRemainingTime: 1500,
             mode: "study",
             numStudy: 0,
             numBreak: 0,

@@ -9,6 +9,7 @@ export type TimerType = {
   isEditing: boolean;
   timerKey: number;
   elapsedTime: number;
+  initialRemainingTime: number;
 };
 
 // spotifyContext.tsx

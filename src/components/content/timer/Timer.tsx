@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import TimerChildren from "./TimerChildren";
 import { useTimerContext } from "@/app/context/TimerContext";
-import { TimerType } from "@/types";
 
 const timerProps = {
   size: 300,
@@ -16,13 +15,17 @@ const timerProps = {
 // 2b. useref? or something?
 // 3. show a loading sign before fading in the clock after db call.
 export default function Timer() {
+  // const hasInitialized = useRef(false);
+
   // clock variables
   const [isPlaying, setIsPlaying] = useState(false);
-  const [duration, setDuration] = useState(900);
+  const [duration, setDuration] = useState(60);
   const [timerKey, setTimerKey] = useState(0);
+  const [initialRemainingTime, setInitialRemainingTime] = useState(60);
 
   // track elapsed time using a stopwatch
-  const [elapsedTime, setElapsedTime] = useState(0); // todo: get from supabase
+  const [elapsedTime, setElapsedTime] = useState(0); // session elapsed time
+  const [globalElapsedTime, setGlobalElapsedTime] = useState(0); // global elapsed time from db
   const [isEditing, setIsEditing] = useState(false); // pass into timerchildren
 
   // not sure if i need this.
@@ -88,24 +91,28 @@ export default function Timer() {
       const data = await getTimer();
       const timer = Array.isArray(data) ? data[0] : data;
 
-      if (timer) {
-        setIsPlaying(timer.isPlaying ?? false);
+      // console.log(timer);
+      if (timer /* && !hasInitialized.current*/) {
+        setIsPlaying(false);
         setDuration(timer.duration ?? 900);
+        setInitialRemainingTime(timer.initialRemainingTime ?? duration);
         setTimerKey(timer.timerKey ?? 0);
         setMode(timer.mode ?? "study");
         setNumStudy(timer.numStudy ?? 0);
         setNumBreak(timer.numBreak ?? 0);
-        setElapsedTime(timer.elapsedTime ?? 0);
+        setElapsedTime(0);
+        setGlobalElapsedTime(timer.elapsedTime ?? 0);
+
         userIdRef.current = timer.user_id ?? null;
+        // hasInitialized.current = true;
       }
     };
     fetchTimer();
   }, []);
 
-  // save to db on unmount
+  // save to db on unmount, play, pause, reset
   useEffect(() => {
     return () => {
-      console.log("unmounting save");
       if (!userIdRef.current) return;
       updateTimer({
         user_id: userIdRef.current,
@@ -116,22 +123,26 @@ export default function Timer() {
         isEditing,
         numStudy,
         numBreak,
-        elapsedTime,
+        elapsedTime: globalElapsedTime + elapsedTime,
+        initialRemainingTime: Math.max(duration - elapsedTime, 1),
       });
     };
-  }, [isPlaying]);
+  }, [isPlaying, duration]);
 
   return (
     <div className="flex flex-col justify-center items-center">
       <p className="p-2 text-center text-lg">
         {mode === "study" ? `Study Time ${numStudy}` : `Break Time ${numBreak}`}
       </p>
-      <p className="p-2 text-center text-lg">Time Elapsed: {elapsedTime}</p>
+      <p className="p-2 text-center text-lg">
+        Time Elapsed: {elapsedTime}, {globalElapsedTime}
+      </p>
       <CountdownCircleTimer
         key={timerKey}
         isPlaying={isPlaying}
         duration={duration}
         onComplete={handleComplete}
+        // initialRemainingTime={initialRemainingTime}
         colors={["#004777", "#F7B801", "#A30000", "#A30000"]}
         colorsTime={[duration, (duration * 2) / 3, duration / 3, 0]}
         {...timerProps}
