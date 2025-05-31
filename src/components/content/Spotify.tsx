@@ -3,11 +3,11 @@ import React, { useEffect } from "react";
 import { useSpotifyContext } from "@/app/context/SpotifyContext";
 
 export default function Spotify() {
-  const { profile, getProfile, authUrl } = useSpotifyContext();
+  const { profile, authUrl } = useSpotifyContext();
 
-  useEffect(() => {
-    getProfile();
-  }, []);
+  // useEffect(() => {
+  //   getProfile();
+  // }, []);
 
   return (
     <div>

@@ -19,25 +19,25 @@ export function SpotifyProvider({ children }: { children: React.ReactNode }) {
     `&redirect_uri=${encodeURIComponent(SPOTIFY_REDIRECT_URI)}` +
     `&scope=${encodeURIComponent(scopes)}`;
 
-  const getProfile = async () => {
-    if (!user) return; // fetch only if user is authenticated
-    const { data, error } = await supabase
-      .from("spotify_tokens")
-      .select("access_token")
-      .eq("user_id", user.id)
-      .single();
-    if (!data?.access_token) return;
+  //   const getProfile = async () => {
+  //     if (!user) return; // fetch only if user is authenticated
+  //     const { data, error } = await supabase
+  //       .from("spotify_tokens")
+  //       .select("access_token")
+  //       .eq("user_id", user.id)
+  //       .single();
+  //     if (!data?.access_token) return;
 
-    const response = await fetch("https://api.spotify.com/v1/me", {
-      headers: { Authorization: "Bearer " + data.access_token },
-    });
-    if (response.ok) setProfile(await response.json());
+  //     const response = await fetch("https://api.spotify.com/v1/me", {
+  //       headers: { Authorization: "Bearer " + data.access_token },
+  //     });
+  //     if (response.ok) setProfile(await response.json());
 
-    window.location.replace("/home");
-  };
+  //     window.location.replace("/home");
+  //   };
 
   return (
-    <SpotifyContext.Provider value={{ profile, getProfile, authUrl }}>
+    <SpotifyContext.Provider value={{ profile, authUrl }}>
       {children}
     </SpotifyContext.Provider>
   );
