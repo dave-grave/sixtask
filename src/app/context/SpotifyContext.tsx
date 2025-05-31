@@ -11,6 +11,7 @@ export function SpotifyProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const [profile, setProfile] = useState<any>(null);
   const [devices, setDevices] = useState<any[]>([]);
+  const [spotifyToken, setSpotifyToken] = useState<string | null>(null);
 
   const scopes = [
     "user-read-private",
@@ -44,21 +45,24 @@ export function SpotifyProvider({ children }: { children: React.ReactNode }) {
         },
       }
     );
-    const { access_token: spotifyToken, devices } = await res.json();
-    if (!spotifyToken) return;
+    const { access_token: token, devices } = await res.json();
+    if (!token) return;
 
     const profileRes = await fetch("https://api.spotify.com/v1/me", {
       headers: {
-        Authorization: `Bearer ${spotifyToken}`,
+        Authorization: `Bearer ${token}`,
       },
     });
     const profileData = await profileRes.json();
     setProfile(profileData);
+    setSpotifyToken(token);
     setDevices(devices);
   };
 
   return (
-    <SpotifyContext.Provider value={{ profile, devices, getProfile, authUrl }}>
+    <SpotifyContext.Provider
+      value={{ profile, devices, getProfile, authUrl, spotifyToken }}
+    >
       {children}
     </SpotifyContext.Provider>
   );

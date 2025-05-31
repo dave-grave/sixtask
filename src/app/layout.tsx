@@ -18,15 +18,19 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <AuthProvider>
-        <TaskProvider>
-          <TimerProvider>
-            <SpotifyProvider>
-              <body>{children}</body>
-            </SpotifyProvider>
-          </TimerProvider>
-        </TaskProvider>
-      </AuthProvider>
+      <body>
+        <Script
+          src="https://sdk.scdn.co/spotify-player.js"
+          strategy="afterInteractive"
+        ></Script>
+        <AuthProvider>
+          <TaskProvider>
+            <TimerProvider>
+              <SpotifyProvider>{children}</SpotifyProvider>
+            </TimerProvider>
+          </TaskProvider>
+        </AuthProvider>
+      </body>
     </html>
   );
 }

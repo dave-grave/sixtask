@@ -2,7 +2,7 @@
 import React from "react";
 import Tasks from "../../components/content/Tasks";
 import Timer from "../../components/content/timer/Timer";
-import Spotify from "@/components/content/Spotify";
+import Spotify from "@/components/content/spotify/Spotify";
 import Dashboard from "@/components/content/Dashboard";
 import { NavPageType } from "@/app/home/page";
 
