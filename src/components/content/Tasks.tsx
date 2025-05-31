@@ -3,14 +3,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import TaskInput from "../ui/TaskInput";
 import { useTaskContext } from "@/app/context/TaskContext";
+import { useAuth } from "@/app/context/AuthContext";
 
 export default function Tasks() {
+  const { loading } = useAuth();
   const [tasks, setTasks] = useState<string[]>(["", "", "", "", "", ""]);
   const prevTasks = useRef<string[]>(tasks);
   const { getTasks, updateTask } = useTaskContext();
 
   // get userID on mount
   useEffect(() => {
+    if (loading) return;
+
     const fetchData = async () => {
       const { data, error } = await getTasks();
       if (data && data[0]?.tasks) {
@@ -20,7 +24,7 @@ export default function Tasks() {
     };
 
     fetchData();
-  }, [getTasks]);
+  }, [loading, getTasks]);
 
   // push tasks to supabase every 10s if changes occur
   useEffect(() => {
