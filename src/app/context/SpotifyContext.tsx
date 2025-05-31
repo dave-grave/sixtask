@@ -10,8 +10,16 @@ const SpotifyContext = createContext<SpotifyContextType | undefined>(undefined);
 export function SpotifyProvider({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const [profile, setProfile] = useState<any>(null);
+  const [devices, setDevices] = useState<any[]>([]);
 
-  const scopes = ["user-read-private, user-read-email"].join("");
+  const scopes = [
+    "user-read-private",
+    "user-read-email",
+    "user-read-playback-state",
+    "user-modify-playback-state",
+    "user-read-currently-playing",
+    "streaming",
+  ].join(" ");
   const authUrl =
     `https://accounts.spotify.com/authorize?` +
     `client_id=${encodeURIComponent(SPOTIFY_CLIENT_ID)}` +
@@ -36,7 +44,7 @@ export function SpotifyProvider({ children }: { children: React.ReactNode }) {
         },
       }
     );
-    const { access_token: spotifyToken } = await res.json();
+    const { access_token: spotifyToken, devices } = await res.json();
     if (!spotifyToken) return;
 
     const profileRes = await fetch("https://api.spotify.com/v1/me", {
@@ -46,11 +54,11 @@ export function SpotifyProvider({ children }: { children: React.ReactNode }) {
     });
     const profileData = await profileRes.json();
     setProfile(profileData);
-    console.log(profileData);
+    setDevices(devices);
   };
 
   return (
-    <SpotifyContext.Provider value={{ profile, getProfile, authUrl }}>
+    <SpotifyContext.Provider value={{ profile, devices, getProfile, authUrl }}>
       {children}
     </SpotifyContext.Provider>
   );

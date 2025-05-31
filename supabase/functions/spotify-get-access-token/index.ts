@@ -73,77 +73,82 @@ serve(async (req) => {
     const now = Date.now();
     const buffer = 60 * 1000;
 
-    if (now < fetchedAt + expiresIn - buffer) {
-      // token still valid
-      return new Response(
-        JSON.stringify({ access_token: tokenRow.access_token }),
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
-      );
+    let access_token = tokenRow.access_token;
+
+    if (now >= fetchedAt + expiresIn - buffer) {
+      // Token expired, refresh it
+      const client_id = Deno.env.get("NEXT_PUBLIC_SPOTIFY_CLIENT_ID")!;
+      const client_secret = Deno.env.get("SPOTIFY_CLIENT_SECRET")!;
+      const params = new URLSearchParams({
+        grant_type: "refresh_token",
+        refresh_token: tokenRow.refresh_token,
+        client_id,
+        client_secret,
+      });
+
+      const tokenRes = await fetch("https://accounts.spotify.com/api/token", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: params,
+      });
+
+      const tokenData = await tokenRes.json();
+
+      if (!tokenRes.ok || !tokenData.access_token) {
+        return new Response(
+          JSON.stringify({
+            error: "Failed to refresh token",
+            details: tokenData,
+          }),
+          {
+            status: 400,
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+          }
+        );
+      }
+
+      // update db with new token
+      const { error: dbError } = await supabase.from("spotify_tokens").upsert({
+        user_id: user.id,
+        access_token: tokenData.access_token,
+        refresh_token: tokenData.refresh_token || tokenRow.refresh_token, // Spotify may not always return a new refresh token
+        expires_in: tokenData.expires_in,
+        fetched_at: new Date().toISOString(),
+      });
+
+      if (dbError) {
+        return new Response(
+          JSON.stringify({
+            error: "Failed to update tokens",
+            details: dbError,
+          }),
+          {
+            status: 500,
+            headers: {
+              "Content-Type": "application/json",
+              "Access-Control-Allow-Origin": "*",
+            },
+          }
+        );
+      }
+      access_token = tokenData.access_token;
     }
 
-    // else token expired
-    const client_id = Deno.env.get("NEXT_PUBLIC_SPOTIFY_CLIENT_ID")!;
-    const client_secret = Deno.env.get("SPOTIFY_CLIENT_SECRET")!;
-    const params = new URLSearchParams({
-      grant_type: "refresh_token",
-      refresh_token: tokenRow.refresh_token,
-      client_id,
-      client_secret,
-    });
-
-    const tokenRes = await fetch("https://accounts.spotify.com/api/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: params,
-    });
-
-    const tokenData = await tokenRes.json();
-
-    if (!tokenRes.ok || !tokenData.access_token) {
-      return new Response(
-        JSON.stringify({
-          error: "Failed to refresh token",
-          details: tokenData,
-        }),
-        {
-          status: 400,
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
-      );
-    }
-
-    // update db with new token
-    const { error: dbError } = await supabase.from("spotify_tokens").upsert({
-      user_id: user.id,
-      access_token: tokenData.access_token,
-      refresh_token: tokenData.refresh_token || tokenRow.refresh_token, // Spotify may not always return a new refresh token
-      expires_in: tokenData.expires_in,
-      fetched_at: new Date().toISOString(),
-    });
-
-    if (dbError) {
-      return new Response(
-        JSON.stringify({ error: "Failed to update tokens", details: dbError }),
-        {
-          status: 500,
-          headers: {
-            "Content-Type": "application/json",
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
-      );
-    }
+    // fetch devices from api for playback
+    const devicesRes = await fetch(
+      "https://api.spotify.com/v1/me/player/devices",
+      {
+        headers: { Authorization: `Bearer ${access_token}` },
+      }
+    );
+    const devicesData = await devicesRes.json();
+    console.log(devicesData);
 
     return new Response(
-      JSON.stringify({ access_token: tokenData.access_token }),
+      JSON.stringify({ access_token, devices: devicesData.devices || [] }),
       {
         headers: {
           "Content-Type": "application/json",
