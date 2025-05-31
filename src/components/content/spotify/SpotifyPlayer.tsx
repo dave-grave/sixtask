@@ -6,7 +6,7 @@ export default function SpotifyPlayer({ token }: { token: string | null }) {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      // Wait until the SDK script is loaded
+      // wait for SDK script to load
       if (window.Spotify) {
         window.onSpotifyWebPlaybackSDKReady = () => {
           const player = new window.Spotify.Player({
@@ -32,13 +32,15 @@ export default function SpotifyPlayer({ token }: { token: string | null }) {
           console.log(player);
         };
 
-        // If SDK is already ready, call the handler immediately
+        // call the handler immediately if SDK ready
         if (window.onSpotifyWebPlaybackSDKReady) {
           window.onSpotifyWebPlaybackSDKReady();
         }
         clearInterval(interval);
       }
     }, 100);
+
+    // disconnnect user on unmount
     return () => {
       clearInterval(interval);
       if (playerRef.current) {
