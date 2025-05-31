@@ -23,6 +23,7 @@ export default function Callback() {
         }
 
         // Send code to Edge Function
+        // TODO: understand post calls
         const edgeFunctionUrl =
           "https://jnnnzjivyiuzekcqdgnh.functions.supabase.co/spotify-exchange";
         fetch(edgeFunctionUrl, {
@@ -49,22 +50,6 @@ export default function Callback() {
             router.push("/home");
           });
       })();
-      //   .then(async (res) => {
-      //     const contentType = res.headers.get("content-type");
-      //     if (contentType && contentType.includes("application/json")) {
-      //       const result = await res.json();
-      //       console.log("Edge Function response:", result);
-      //     } else {
-      //       const text = await res.text();
-      //       console.error("Non-JSON response:", text);
-      //     }
-      //     router.push("/home");
-      //   })
-      //   .catch((err) => {
-      //     console.error("Error calling Edge Function:", err);
-      //     router.push("/home");
-      //   });
-      // });
     } else {
       router.push("/home");
     }

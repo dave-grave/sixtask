@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.203.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
+// TODO: understand what is going on here
 serve(async (req) => {
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
@@ -118,14 +119,29 @@ serve(async (req) => {
       );
     }
 
-    // Optionally: store tokens in your Supabase DB
-    // Example:
-    // await supabase.from("spotify_tokens").upsert({
-    //   user_id: user.id,
-    //   access_token: tokenData.access_token,
-    //   refresh_token: tokenData.refresh_token,
-    //   expires_in: tokenData.expires_in,
-    // });
+    // Save tokens to the DB
+    const { error: dbError } = await supabase.from("spotify_tokens").upsert({
+      user_id: user.id,
+      access_token: tokenData.access_token,
+      refresh_token: tokenData.refresh_token,
+      expires_in: tokenData.expires_in,
+      fetched_at: new Date().toISOString(), // Store when you got the token
+    });
+
+    if (dbError) {
+      return new Response(
+        JSON.stringify({ error: "Failed to save tokens", details: dbError }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      );
+    } else {
+      console.log("Tokens saved in db!");
+    }
 
     return new Response(JSON.stringify({ success: true, tokenData }), {
       headers: {
