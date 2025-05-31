@@ -44,7 +44,7 @@ export default function Tasks() {
   };
 
   return (
-    <div className="flex flex-col justify-between ">
+    <div className="flex flex-col justify-center items-center">
       {tasks.map((task, idx) => (
         <TaskInput
           key={idx}

@@ -17,14 +17,14 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col gap-6 min-h-screen items-center justify-center">
+    <div className="flex flex-col gap-6 min-h-screen items-center justify-center w-full">
       <Header />
-      <div className="flex flex-col justify-center">
+      <div className="flex flex-col justify-center w-full">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="flex flex-col gap-12"
+          className="flex flex-col gap-12 w-full"
         >
           <Content currentPage={currentPage} />
           <Navbar
