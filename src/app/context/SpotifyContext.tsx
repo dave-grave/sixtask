@@ -30,6 +30,7 @@ export function SpotifyProvider({ children }: { children: React.ReactNode }) {
 
   const getProfile = async () => {
     // get Supabase JWT
+
     const { data } = await supabase.auth.getSession();
     const access_token = data.session?.access_token;
     if (!access_token) return;

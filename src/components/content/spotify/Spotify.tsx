@@ -9,14 +9,16 @@ export default function Spotify() {
 
   useEffect(() => {
     getProfile();
-    console.log(devices);
+    // console.log(devices);
   }, []);
 
   return (
-    <div>
-      <a href={authUrl}>connect with spotify</a>
-      {profile ? <pre>{JSON.stringify(profile, null, 2)}</pre> : <p>loading</p>}
-      <SpotifyPlayer token={spotifyToken} />
+    <div className="flex flex-col items-center">
+      {spotifyToken ? (
+        <SpotifyPlayer token={spotifyToken} />
+      ) : (
+        <a href={authUrl}>connect with spotify</a>
+      )}
     </div>
   );
 }
