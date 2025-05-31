@@ -29,17 +29,23 @@ export default function TimerChildren({
   setIsPlaying,
   duration,
   setDuration,
+  timerKey,
   setTimerKey,
   isEditing,
   setIsEditing,
+  elapsedTime,
+  setElapsedTime,
 }: {
   remainingTime: number;
   setIsPlaying: (state: boolean) => void;
   duration: number;
   setDuration: (duration: number) => void;
+  timerKey: number;
   setTimerKey: React.Dispatch<React.SetStateAction<number>>;
   isEditing: boolean;
   setIsEditing: (val: boolean) => void;
+  elapsedTime: number;
+  setElapsedTime: (val: any) => void;
 }) {
   const [inputValue, setInputValue] = useState(formatTimeObj(duration));
   const prevInputValue = useRef<{
@@ -47,12 +53,14 @@ export default function TimerChildren({
     minutes: string;
     seconds: string;
   } | null>(null);
+
+  // input refs
   const hourRef = useRef<HTMLInputElement>(null);
   const minRef = useRef<HTMLInputElement>(null);
   const secRef = useRef<HTMLInputElement>(null);
-
   const blurTimeout = useRef<NodeJS.Timeout | null>(null);
 
+  // handle when user clicks off editing timer
   const handleInputBlur = () => {
     blurTimeout.current = setTimeout(() => {
       if (
@@ -65,6 +73,7 @@ export default function TimerChildren({
     }, 10);
   };
 
+  // handle user clicks to edit timer
   const handleInputFocus = (field: "hours" | "minutes" | "seconds") => {
     if (blurTimeout.current) {
       clearTimeout(blurTimeout.current);
@@ -75,7 +84,7 @@ export default function TimerChildren({
     if (field === "seconds" && secRef.current) secRef.current.select();
   };
 
-  // focus the hour input when in edit mode
+  // default focus the hour input entering edit mode
   useEffect(() => {
     if (isEditing && hourRef.current) {
       hourRef.current.focus();
@@ -83,7 +92,7 @@ export default function TimerChildren({
     }
   }, [isEditing]);
 
-  // if we leave edit mode or when timer ticks, update inputValue
+  // update inputValue if leave edit mode or if timer ticks
   useEffect(() => {
     if (!isEditing) {
       setInputValue(formatTimeObj(remainingTime));
@@ -118,7 +127,7 @@ export default function TimerChildren({
 
   // update duration when input changes
   const applyInput = () => {
-    // check if input hasn't changed, treat like pausing the clock.
+    // if input hasn't changed, treat like pausing the clock.
     const prev = prevInputValue.current;
     const curr = inputValue;
     const unchanged =
@@ -168,6 +177,22 @@ export default function TimerChildren({
       }
     }
   };
+
+  // variables to manage elapsed time
+  const prevRemainingTimeRef = useRef(remainingTime);
+  const prevTimerKeyRef = useRef(timerKey);
+
+  useEffect(() => {
+    // update elapsed time only if timerKey hasn't changed and remainingTime decreased
+    if (
+      timerKey === prevTimerKeyRef.current &&
+      remainingTime < prevRemainingTimeRef.current
+    ) {
+      setElapsedTime((prev: any) => prev + 1);
+    }
+    prevRemainingTimeRef.current = remainingTime;
+    prevTimerKeyRef.current = timerKey;
+  }, [remainingTime, timerKey]);
 
   return (
     <span

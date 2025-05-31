@@ -11,6 +11,10 @@ const timerProps = {
   strokeWidth: 12,
 };
 
+// TODO: 1. sync up elapsed time with remainingtime, then hide it and push it to supabase instead.
+// 2. clock should keep running even if we leave page
+// 2b. useref? or something?
+// 3. show a loading sign before fading in the clock after db call.
 export default function Timer() {
   // clock variables
   const [isPlaying, setIsPlaying] = useState(false);
@@ -18,31 +22,33 @@ export default function Timer() {
   const [timerKey, setTimerKey] = useState(0);
 
   // track elapsed time using a stopwatch
-  const [stopwatch, setStopwatch] = useState(0);
-  const [elapsedTime, setElapsedTime] = useState(0);
+  // const [stopwatch, setStopwatch] = useState(0);
   const [isEditing, setIsEditing] = useState(false); // pass into timerchildren
 
-  function formatTimeString(totalSeconds: number) {
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds % 3600) / 60);
-    const seconds = totalSeconds % 60;
-    return [
-      hours.toString().padStart(2, "0"),
-      minutes.toString().padStart(2, "0"),
-      seconds.toString().padStart(2, "0"),
-    ].join(":");
-  }
+  const [elapsedTime, setElapsedTime] = useState(0); // todo: get from supabase
+
+  // not sure if i need this.
+  // function formatTimeString(totalSeconds: number) {
+  //   const hours = Math.floor(totalSeconds / 3600);
+  //   const minutes = Math.floor((totalSeconds % 3600) / 60);
+  //   const seconds = totalSeconds % 60;
+  //   return [
+  //     hours.toString().padStart(2, "0"),
+  //     minutes.toString().padStart(2, "0"),
+  //     seconds.toString().padStart(2, "0"),
+  //   ].join(":");
+  // }
 
   // update stopwatch
-  useEffect(() => {
-    if (!isEditing && isPlaying) {
-      const interval = setInterval(() => {
-        setStopwatch((prev) => prev + 1);
-        setElapsedTime((prev) => prev + 1);
-      }, 1000);
-      return () => clearInterval(interval);
-    }
-  }, [isEditing, isPlaying]);
+  // useEffect(() => {
+  //   if (!isEditing && isPlaying) {
+  //     const interval = setInterval(() => {
+  //       setStopwatch((prev) => prev + 1);
+  //       setElapsedTime((prev) => prev + 1);
+  //     }, 1000);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [isEditing, isPlaying]);
 
   // variables to track study mode
   const [mode, setMode] = useState<"study" | "break">("study");
@@ -76,7 +82,6 @@ export default function Timer() {
   // update timer key to allow timer reset
   const handleReset = () => {
     setIsPlaying(false);
-    setStopwatch(0);
     setDuration(duration);
     setTimerKey((prev) => prev + 1);
   };
@@ -101,7 +106,6 @@ export default function Timer() {
     setIsPlaying(timer?.isPlaying ?? false);
     setDuration(timer?.duration ?? 900);
     setTimerKey(timer?.timerKey ?? 0);
-    setStopwatch(timer?.stopwatch ?? 0);
     setMode(timer?.mode ?? "study");
     setNumStudy(timer?.numStudy ?? 0);
     setNumBreak(timer?.numBreak ?? 0);
@@ -117,34 +121,22 @@ export default function Timer() {
       isPlaying,
       duration,
       timerKey,
-      stopwatch,
       mode,
       numStudy,
       numBreak,
       isEditing,
-      remainingTime: Math.max(duration - stopwatch, 0),
+      // remainingTime: Math.max(duration - stopwatch, 0),
     };
     setTimerData(updatedTimer);
     updateTimer(updatedTimer);
-  }, [
-    isPlaying,
-    duration,
-    timerKey,
-    stopwatch,
-    mode,
-    numStudy,
-    numBreak,
-    isEditing,
-  ]);
+  }, [isPlaying, duration, timerKey, mode, numStudy, numBreak, isEditing]);
 
   return (
     <div className="flex flex-col justify-center items-center">
       <p className="p-2 text-center text-lg">
         {mode === "study" ? `Study Time ${numStudy}` : `Break Time ${numBreak}`}
       </p>
-      <p className="p-2 text-center text-lg">
-        Time Elapsed: {formatTimeString(elapsedTime)}
-      </p>
+      <p className="p-2 text-center text-lg">Time Elapsed: {elapsedTime}</p>
       <CountdownCircleTimer
         key={timerKey}
         isPlaying={isPlaying}
@@ -161,9 +153,12 @@ export default function Timer() {
               setIsPlaying={setIsPlaying}
               duration={duration}
               setDuration={setDuration}
+              timerKey={timerKey}
               setTimerKey={setTimerKey}
               isEditing={isEditing}
               setIsEditing={setIsEditing}
+              elapsedTime={elapsedTime}
+              setElapsedTime={setElapsedTime}
             />
           );
         }}
