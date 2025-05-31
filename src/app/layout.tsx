@@ -4,7 +4,6 @@ import { AuthProvider } from "./context/AuthContext";
 import { TaskProvider } from "./context/TaskContext";
 import { TimerProvider } from "./context/TimerContext";
 import { SpotifyProvider } from "./context/SpotifyContext";
-import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "sixtask",
@@ -19,10 +18,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Script
-          src="https://sdk.scdn.co/spotify-player.js"
-          strategy="afterInteractive"
-        ></Script>
         <AuthProvider>
           <TaskProvider>
             <TimerProvider>

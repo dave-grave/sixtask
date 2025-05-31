@@ -150,11 +150,9 @@ export default function TimerChildren({
 
     if (e.key === "ArrowRight") {
       if (field === "hours" && minRef.current) {
-        console.log("fopcus minref");
         minRef.current.focus();
       }
       if (field === "minutes" && secRef.current) {
-        console.log("fopcus secref");
         secRef.current.focus();
       }
     }

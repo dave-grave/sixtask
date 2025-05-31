@@ -124,7 +124,6 @@ export default function Timer() {
       isEditing,
       remainingTime: Math.max(duration - stopwatch, 0),
     };
-    console.log(updatedTimer);
     setTimerData(updatedTimer);
     updateTimer(updatedTimer);
   }, [

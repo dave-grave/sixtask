@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import Script from "next/script";
 
 export default function SpotifyPlayer({ token }: { token: string | null }) {
   const playerRef = useRef<any>(null);
@@ -77,7 +78,15 @@ export default function SpotifyPlayer({ token }: { token: string | null }) {
       >
         play song
       </button>
-      {deviceId && <div>Web Player Device ID: {deviceId}</div>}
+      {deviceId && (
+        <div>
+          <Script
+            src="https://sdk.scdn.co/spotify-player.js"
+            strategy="afterInteractive"
+          ></Script>
+          <div>Web Player Device ID: {deviceId}</div>
+        </div>
+      )}
     </div>
   );
 }
