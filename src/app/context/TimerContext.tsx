@@ -34,15 +34,14 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
         [
           {
             user_id: user.id,
-            stopwatch: 0,
             duration: 1500,
-            remainingTime: 1500,
             mode: "study",
             numStudy: 0,
             numBreak: 0,
             isPlaying: false,
             isEditing: false,
             timerKey: 0,
+            elapsedTime: 0,
           },
         ],
         { ignoreDuplicates: true }

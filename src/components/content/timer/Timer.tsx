@@ -22,10 +22,8 @@ export default function Timer() {
   const [timerKey, setTimerKey] = useState(0);
 
   // track elapsed time using a stopwatch
-  // const [stopwatch, setStopwatch] = useState(0);
-  const [isEditing, setIsEditing] = useState(false); // pass into timerchildren
-
   const [elapsedTime, setElapsedTime] = useState(0); // todo: get from supabase
+  const [isEditing, setIsEditing] = useState(false); // pass into timerchildren
 
   // not sure if i need this.
   // function formatTimeString(totalSeconds: number) {
@@ -38,17 +36,6 @@ export default function Timer() {
   //     seconds.toString().padStart(2, "0"),
   //   ].join(":");
   // }
-
-  // update stopwatch
-  // useEffect(() => {
-  //   if (!isEditing && isPlaying) {
-  //     const interval = setInterval(() => {
-  //       setStopwatch((prev) => prev + 1);
-  //       setElapsedTime((prev) => prev + 1);
-  //     }, 1000);
-  //     return () => clearInterval(interval);
-  //   }
-  // }, [isEditing, isPlaying]);
 
   // variables to track study mode
   const [mode, setMode] = useState<"study" | "break">("study");
@@ -88,48 +75,51 @@ export default function Timer() {
 
   // set timer context to supabase
   const { getTimer, insertTimer, updateTimer } = useTimerContext();
-  const [timerData, setTimerData] = useState<TimerType | null>(null);
 
-  // fetch timer data
+  // Track user_id for DB updates
+  const userIdRef = useRef<string | null>(null);
+
+  // const [timerData, setTimerData] = useState<TimerType | null>(null);
+
+  // fetch timer data on mount
   useEffect(() => {
     const fetchTimer = async () => {
       await insertTimer(); // upsert default timer if not in db (first sign-on)
       const data = await getTimer();
-      setTimerData(data);
+      const timer = Array.isArray(data) ? data[0] : data;
+
+      if (timer) {
+        setIsPlaying(timer.isPlaying ?? false);
+        setDuration(timer.duration ?? 900);
+        setTimerKey(timer.timerKey ?? 0);
+        setMode(timer.mode ?? "study");
+        setNumStudy(timer.numStudy ?? 0);
+        setNumBreak(timer.numBreak ?? 0);
+        setElapsedTime(timer.elapsedTime ?? 0);
+        userIdRef.current = timer.user_id ?? null;
+      }
     };
     fetchTimer();
   }, []);
 
-  // set timer data
+  // save to db on unmount
   useEffect(() => {
-    const timer = Array.isArray(timerData) ? timerData[0] : timerData;
-    setIsPlaying(timer?.isPlaying ?? false);
-    setDuration(timer?.duration ?? 900);
-    setTimerKey(timer?.timerKey ?? 0);
-    setMode(timer?.mode ?? "study");
-    setNumStudy(timer?.numStudy ?? 0);
-    setNumBreak(timer?.numBreak ?? 0);
-    setTimerData(timer);
-  }, [timerData]);
-
-  // update timer data
-  useEffect(() => {
-    if (!timerData) return;
-
-    const updatedTimer = {
-      ...timerData,
-      isPlaying,
-      duration,
-      timerKey,
-      mode,
-      numStudy,
-      numBreak,
-      isEditing,
-      // remainingTime: Math.max(duration - stopwatch, 0),
+    return () => {
+      console.log("unmounting save");
+      if (!userIdRef.current) return;
+      updateTimer({
+        user_id: userIdRef.current,
+        isPlaying,
+        duration,
+        timerKey,
+        mode,
+        isEditing,
+        numStudy,
+        numBreak,
+        elapsedTime,
+      });
     };
-    setTimerData(updatedTimer);
-    updateTimer(updatedTimer);
-  }, [isPlaying, duration, timerKey, mode, numStudy, numBreak, isEditing]);
+  }, [isPlaying]);
 
   return (
     <div className="flex flex-col justify-center items-center">

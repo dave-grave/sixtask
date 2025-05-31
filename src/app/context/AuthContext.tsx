@@ -49,6 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error;
     setUser(data.user);
     return data.user;
+    // TODO: upsert default data every time user logs in.
   };
 
   const signOut = async () => {
