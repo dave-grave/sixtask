@@ -11,7 +11,8 @@ export default function Tasks() {
     Array(6).fill({ value: "", isChecked: false })
   );
   const prevTasks = useRef<string[]>(tasks);
-  const { getTasks, updateTask } = useTaskContext();
+  const { getTasks, updateTask, getTaskItems, upsertTaskItems } =
+    useTaskContext();
 
   // get userID on mount
   useEffect(() => {

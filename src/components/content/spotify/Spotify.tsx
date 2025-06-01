@@ -9,7 +9,7 @@ export default function Spotify() {
 
   useEffect(() => {
     getProfile();
-    // console.log(devices);
+    console.log(devices);
   }, []);
 
   return (
