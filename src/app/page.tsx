@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import Home from "./home/page";
 import Login from "./Login";
 
 export default function Index() {

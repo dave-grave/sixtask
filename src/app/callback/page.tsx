@@ -36,7 +36,7 @@ export default function Callback() {
           .then(async (res) => {
             const contentType = res.headers.get("content-type");
             if (contentType && contentType.includes("application/json")) {
-              const result = await res.json();
+              // const result = await res.json();
               // console.log("Edge Function response:", result);
             } else {
               const text = await res.text();

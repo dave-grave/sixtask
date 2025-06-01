@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import NavButton from "@/components/ui/NavButton";
 import { NavPageType } from "@/app/home/page";
 import {

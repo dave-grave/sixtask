@@ -4,22 +4,7 @@ import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 import { NavPageType } from "./page";
 
-import {
-  TaskIcon,
-  TimerIcon,
-  DashboardIcon,
-  SpotifyIcon,
-  SettingsIcon,
-  LogoutIcon,
-} from "@/components/ui/Icons";
-
-const icons: Record<NavPageType, React.ReactElement> = {
-  tasks: TaskIcon,
-  timer: TimerIcon,
-  dashboard: DashboardIcon,
-  spotify: SpotifyIcon,
-  settings: SettingsIcon,
-};
+import { SettingsIcon, LogoutIcon } from "@/components/ui/Icons";
 
 export default function Footer({
   handleNavigation,

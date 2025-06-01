@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useLayoutEffect, useState, useRef } from "react";
-import { motion } from "motion/react";
-import { cn } from "@/lib/utils";
+import React from "react";
 
 interface TaskInputProps {
   value: string;

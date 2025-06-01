@@ -14,7 +14,7 @@ type TaskContextType = {
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
 
 export function TaskProvider({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
 
   const getTaskItems = async () => {
     if (!user) throw new Error("user not found to get task items");

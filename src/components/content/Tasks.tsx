@@ -19,7 +19,7 @@ export default function Tasks() {
     if (loading) return;
 
     const fetchData = async () => {
-      const { data, error } = await getTaskItems();
+      const { data } = await getTaskItems();
       if (data && data.length > 0) {
         setTasks(
           data.map((item: any) => ({

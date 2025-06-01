@@ -14,8 +14,8 @@ export type TimerType = {
 
 // spotifyContext.tsx
 export type SpotifyContextType = {
-  profile: any;
-  devices: string[];
+  // profile: any;
+  // devices: string[];
   getProfile: () => Promise<void>;
   authUrl: string;
   spotifyToken: string | null;

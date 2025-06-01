@@ -5,7 +5,7 @@ export default function Backdrop({
   children,
   onClick,
 }: {
-  children: any;
+  children: React.ReactNode;
   onClick: () => void;
 }) {
   return (

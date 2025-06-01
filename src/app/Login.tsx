@@ -21,8 +21,12 @@ export default function Login() {
     try {
       await signIn(email, password);
       router.push("/home");
-    } catch (error: any) {
-      setError(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("an unknown error occured");
+      }
       setShowModal(true);
     } finally {
       setLoading(false);

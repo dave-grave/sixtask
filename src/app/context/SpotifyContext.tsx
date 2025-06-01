@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState } from "react";
-import { useAuth } from "./AuthContext";
+// import { useAuth } from "./AuthContext";
 import { SpotifyContextType } from "@/types";
 import { SPOTIFY_CLIENT_ID, SPOTIFY_REDIRECT_URI } from "@/lib/spotifyConfig";
 import { supabase } from "@/lib/supabase";
@@ -8,9 +8,9 @@ import { supabase } from "@/lib/supabase";
 const SpotifyContext = createContext<SpotifyContextType | undefined>(undefined);
 
 export function SpotifyProvider({ children }: { children: React.ReactNode }) {
-  const { user } = useAuth();
-  const [profile, setProfile] = useState<any>(null);
-  const [devices, setDevices] = useState<any[]>([]);
+  // const { user } = useAuth();
+  // const [profile, setProfile] = useState<any>(null);
+  // const [devices, setDevices] = useState<any[]>([]);
   const [spotifyToken, setSpotifyToken] = useState<string | null>(null);
 
   const scopes = [
@@ -48,31 +48,31 @@ export function SpotifyProvider({ children }: { children: React.ReactNode }) {
         },
       }
     );
-    const { access_token: token, devices } = await res.json();
+    const { access_token: token } = await res.json();
     if (!token) return;
 
-    const profileRes = await fetch("https://api.spotify.com/v1/me", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const profileData = await profileRes.json();
-    setProfile(profileData);
+    // const profileRes = await fetch("https://api.spotify.com/v1/me", {
+    //   headers: {
+    //     Authorization: `Bearer ${token}`,
+    //   },
+    // });
+    // const profileData = await profileRes.json();
+    // setProfile(profileData);
+    // setDevices(devices);
     setSpotifyToken(token);
-    setDevices(devices);
   };
 
   const logoutSpotify = () => {
     setSpotifyToken(null);
-    setProfile(null);
-    setDevices([]);
+    // setProfile(null);
+    // setDevices([]);
   };
 
   return (
     <SpotifyContext.Provider
       value={{
-        profile,
-        devices,
+        // profile,
+        // devices,
         getProfile,
         authUrl,
         spotifyToken,

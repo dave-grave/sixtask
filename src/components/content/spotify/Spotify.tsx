@@ -4,7 +4,7 @@ import { useSpotifyContext } from "@/app/context/SpotifyContext";
 import SpotifyPlayer from "./SpotifyPlayer";
 
 export default function Spotify() {
-  const { profile, devices, getProfile, authUrl, spotifyToken, logoutSpotify } =
+  const { getProfile, authUrl, spotifyToken, logoutSpotify } =
     useSpotifyContext();
 
   useEffect(() => {
