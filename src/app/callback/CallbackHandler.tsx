@@ -16,6 +16,7 @@ export default function CallbackHandler() {
       (async () => {
         const { data } = await supabase.auth.getSession();
         const access_token = data.session?.access_token;
+        console.log(access_token);
         if (!access_token) {
           console.error("No supabase access token found");
           router.push("/home");
