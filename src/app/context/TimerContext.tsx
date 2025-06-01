@@ -1,7 +1,6 @@
 "use client";
 import React, { useContext, createContext, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
-import type { Session } from "@supabase/supabase-js";
 import { useAuth } from "./AuthContext";
 import { TimerType } from "@/types";
 import { format } from "date-fns-tz";
@@ -11,6 +10,7 @@ type TimerContextType = {
   // insertTimer: () => Promise<any>;
   // updateTimer: (data: TimerType) => Promise<void>;
   upsertTimer: (val: Partial<TimerType>) => Promise<any>;
+  getAllTimers: () => Promise<any>;
 };
 
 const TimerContext = createContext<TimerContextType | undefined>(undefined);
@@ -51,8 +51,22 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
     return data;
   };
 
+  const getAllTimers = async () => {
+    if (!user) throw new Error("no user found get all timers");
+    const { data, error } = await supabase
+      .from("timer")
+      .select("date, elapsedTime")
+      .eq("user_id", user.id)
+      .order("date", { ascending: true });
+    if (error) {
+      console.error("error in getalltimers", error);
+      return [];
+    }
+    return data;
+  };
+
   return (
-    <TimerContext.Provider value={{ getTimer, upsertTimer }}>
+    <TimerContext.Provider value={{ getTimer, upsertTimer, getAllTimers }}>
       {children}
     </TimerContext.Provider>
   );

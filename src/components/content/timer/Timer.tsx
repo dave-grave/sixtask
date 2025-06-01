@@ -29,18 +29,6 @@ export default function Timer() {
   const [globalElapsedTime, setGlobalElapsedTime] = useState(0); // global elapsed time from db
   const [isEditing, setIsEditing] = useState(false); // pass into timerchildren
 
-  // not sure if i need this.
-  // function formatTimeString(totalSeconds: number) {
-  //   const hours = Math.floor(totalSeconds / 3600);
-  //   const minutes = Math.floor((totalSeconds % 3600) / 60);
-  //   const seconds = totalSeconds % 60;
-  //   return [
-  //     hours.toString().padStart(2, "0"),
-  //     minutes.toString().padStart(2, "0"),
-  //     seconds.toString().padStart(2, "0"),
-  //   ].join(":");
-  // }
-
   // variables to track study mode
   const [mode, setMode] = useState<"study" | "break">("study");
   const [numStudy, setNumStudy] = useState(0);

@@ -2,15 +2,19 @@
 import React, { useState, useEffect } from "react";
 import { TasksBarChart } from "./TasksBarChart";
 import { useTaskContext } from "@/app/context/TaskContext";
+import { useTimerContext } from "@/app/context/TimerContext";
+import { TimerBarChart } from "./TimerBarChart";
 
 export default function Dashboard() {
   const { getTaskCompletions } = useTaskContext();
-  const [chartData, setChartData] = useState([]);
+  const { getAllTimers } = useTimerContext();
+  const [taskData, setTaskData] = useState([]);
+  const [timerData, setTimerData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const data = await getTaskCompletions();
-      setChartData(
+      setTaskData(
         data.map((item: any) => ({
           date: item.date,
           completed: item.completed_count,
@@ -18,11 +22,26 @@ export default function Dashboard() {
       );
     };
     fetchData();
-  }, [getTaskCompletions]);
+  }, []);
+
+  useEffect(() => {
+    const fetchTimerData = async () => {
+      const data = await getAllTimers();
+
+      setTimerData(
+        data.map((item: any) => ({
+          date: item.date,
+          elapsedTime: item.elapsedTime,
+        }))
+      );
+    };
+    fetchTimerData();
+  }, []);
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <TasksBarChart chartData={chartData} />
+    <div className="flex flex-col gap-4 w-full max-w-4xl mx-auto">
+      <TasksBarChart chartData={taskData} />
+      <TimerBarChart chartData={timerData} />
     </div>
   );
 }
