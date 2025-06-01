@@ -5,9 +5,6 @@ import { useAuth } from "./AuthContext";
 import { format } from "date-fns-tz";
 
 type TaskContextType = {
-  // getTasks: () => Promise<any>;
-  // createTask: (data: any) => Promise<any>;
-  // updateTask: (data: any) => Promise<any>;
   getTaskItems: () => Promise<any>;
   upsertTaskItems: (items: any[]) => Promise<any>;
   getTaskCompletions: () => Promise<any>;
@@ -19,22 +16,6 @@ const TaskContext = createContext<TaskContextType | undefined>(undefined);
 export function TaskProvider({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
 
-  // const getTasks = async () => {
-  //   if (!user) throw new Error("user not found");
-  //   return supabase.from("tasks").select("*").eq("user_id", user.id);
-  // };
-
-  // const createTask = async (data: any) => {
-  //   if (!user) throw new Error("user not found");
-  //   return supabase.from("tasks").insert([{ ...data, user_id: user.id }]);
-  // };
-
-  // const updateTask = async (data: any) => {
-  //   if (!user) throw new Error("user not found");
-  //   return supabase.from("tasks").update(data).eq("user_id", user.id);
-  // };
-
-  // NEW GET TASK ITEMS
   const getTaskItems = async () => {
     if (!user) throw new Error("user not found to get task items");
     const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -109,9 +90,6 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
   return (
     <TaskContext.Provider
       value={{
-        // getTasks,
-        // createTask,
-        // updateTask,
         getTaskItems,
         upsertTaskItems,
         getTaskCompletions,
