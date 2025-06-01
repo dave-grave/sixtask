@@ -10,6 +10,7 @@ export default function CallbackHandler() {
   useEffect(() => {
     const code = searchParams.get("code");
 
+    console.log(code);
     // send unique code to supabase backend edge function
     if (code) {
       (async () => {
