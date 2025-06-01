@@ -1,49 +1,43 @@
 import React, { useEffect, useRef, useState } from "react";
-import Script from "next/script";
 
 export default function SpotifyPlayer({ token }: { token: string | null }) {
   const playerRef = useRef<any>(null);
   const [deviceId, setDeviceId] = useState<string | null>(null);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      // wait for SDK script to load
-      if (window.Spotify) {
-        window.onSpotifyWebPlaybackSDKReady = () => {
-          const player = new window.Spotify.Player({
-            name: "sixtask web player",
-            getOAuthToken: (cb: (token: string | null) => void) => {
-              cb(token);
-            },
-            volume: 0.5,
-          });
+    if (!token) return;
 
-          // add listener to deviceId
-          player.addListener(
-            "ready",
-            ({ device_id }: { device_id: string }) => {
-              setDeviceId(device_id);
-              console.log("device is ready", device_id);
-            }
-          );
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      const player = new window.Spotify.Player({
+        name: "sixtask web player",
+        getOAuthToken: (cb: (token: string | null) => void) => {
+          cb(token);
+        },
+        volume: 0.5,
+      });
 
-          // connect player to web playback
-          playerRef.current = player;
-          player.connect();
-          console.log(player);
-        };
+      player.addListener("ready", ({ device_id }: { device_id: string }) => {
+        setDeviceId(device_id);
+        console.log("device is ready", device_id);
+      });
 
-        // call the handler immediately if SDK ready
-        if (window.onSpotifyWebPlaybackSDKReady) {
-          window.onSpotifyWebPlaybackSDKReady();
-        }
-        clearInterval(interval);
-      }
-    }, 100);
+      playerRef.current = player;
+      player.connect();
+    };
 
-    // disconnnect user on unmount
+    if (!document.getElementById("spotify-player-script")) {
+      const script = document.createElement("script");
+      script.id = "spotify-player-script";
+      script.type = "text/javascript";
+      script.async = true;
+      script.src = "https://sdk.scdn.co/spotify-player.js";
+      document.body.appendChild(script);
+    } else if (window.Spotify && window.onSpotifyWebPlaybackSDKReady) {
+      // If script is already loaded, call the handler immediately
+      window.onSpotifyWebPlaybackSDKReady();
+    }
+
     return () => {
-      clearInterval(interval);
       if (playerRef.current) {
         playerRef.current.disconnect();
         playerRef.current = null;
@@ -71,6 +65,11 @@ export default function SpotifyPlayer({ token }: { token: string | null }) {
 
   return (
     <div className="flex flex-col items-center gap-2">
+      {/* <Script
+        src="https://sdk.scdn.co/spotify-player.js"
+        strategy="afterInteractive"
+        onLoad={handleScriptLoad}
+      ></Script> */}
       <button
         className="bg-green-600 rounded px-4 py-2 transition hover:bg-green-800"
         onClick={playSong}
@@ -80,11 +79,7 @@ export default function SpotifyPlayer({ token }: { token: string | null }) {
       </button>
       {deviceId && (
         <div>
-          <Script
-            src="https://sdk.scdn.co/spotify-player.js"
-            strategy="afterInteractive"
-          ></Script>
-          <div>Web Player Device ID: {deviceId}</div>
+          <div>Ready to Play!</div>
         </div>
       )}
     </div>
