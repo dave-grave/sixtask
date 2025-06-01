@@ -2,14 +2,17 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "./context/AuthContext";
+import Modal from "@/components/ui/register/Modal";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { signIn } = useAuth();
+  const [showModal, setShowModal] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,6 +26,13 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setError(null);
+    setSuccess(null);
   };
 
   return (
@@ -57,8 +67,20 @@ export default function Login() {
         >
           {loading ? "Logging in..." : "Login"}
         </button>
-        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+        <p className="text-center">
+          New user? Register{" "}
+          <a
+            href="/register"
+            className="text-blue-500 font-bold hover:underline hover:cursor-pointer"
+          >
+            here.
+          </a>
+        </p>
       </form>
+      <Modal show={showModal} onClose={closeModal}>
+        {error && <p className="text-red-500 text-center">{error}</p>}
+        {success && <p className="text-green-600 text-center">{success}</p>}
+      </Modal>
     </div>
   );
 }

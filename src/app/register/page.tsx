@@ -1,8 +1,8 @@
+"use client";
 import React, { useState } from "react";
 import { supabase } from "@/lib/supabase";
 import Modal from "@/components/ui/register/Modal";
 
-// TODO: put this on a separate page that is linked to by login.tsx. then, when user successfully registers, redirect them back to login.
 export default function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
