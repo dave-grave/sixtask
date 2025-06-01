@@ -4,6 +4,7 @@ import Tasks from "../../components/content/Tasks";
 import Timer from "../../components/content/timer/Timer";
 import Spotify from "@/components/content/spotify/Spotify";
 import Dashboard from "@/components/content/dashboard/Dashboard";
+import Settings from "@/components/content/settings/Settings";
 import { NavPageType } from "@/app/home/page";
 
 export default function Content({ currentPage }: { currentPage: NavPageType }) {
@@ -16,6 +17,8 @@ export default function Content({ currentPage }: { currentPage: NavPageType }) {
       return <Spotify />;
     case "dashboard":
       return <Dashboard />;
+    case "settings":
+      return <Settings />;
     default:
       return null;
   }

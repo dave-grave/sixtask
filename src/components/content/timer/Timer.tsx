@@ -145,11 +145,11 @@ export default function Timer() {
   return (
     <div className="flex flex-col justify-center items-center">
       <p className="p-2 text-center text-lg">
-        {mode === "study" ? `Study Time ${numStudy}` : `Break Time ${numBreak}`}
+        {mode === "study"
+          ? `Study Session #${numStudy}`
+          : `Break Session #${numBreak}`}
       </p>
-      <p className="p-2 text-center text-lg">
-        Time Elapsed: {elapsedTime}, {globalElapsedTime}
-      </p>
+      <p className="p-2 text-center text-lg"></p>
       <CountdownCircleTimer
         key={timerKey}
         isPlaying={isPlaying}
