@@ -11,7 +11,7 @@ export default function Tasks() {
     Array(6).fill({ value: "", isChecked: false })
   );
   const prevTasks = useRef<string[]>(tasks);
-  const { getTasks, updateTask, getTaskItems, upsertTaskItems } =
+  const { getTaskItems, upsertTaskItems, upsertTaskCompletions } =
     useTaskContext();
 
   // get userID on mount
@@ -61,6 +61,12 @@ export default function Tasks() {
     updatedTasks[index] = { ...updatedTasks[index], isChecked: checked };
     setTasks(updatedTasks);
     upsertTaskItems(updatedTasks);
+    updateCompletions(updatedTasks);
+  };
+
+  const updateCompletions = (updatedTasks: any[]) => {
+    const completedCount = updatedTasks.filter((t: any) => t.isChecked).length;
+    upsertTaskCompletions(completedCount);
   };
 
   return (

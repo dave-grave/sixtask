@@ -2,13 +2,15 @@
 import React, { createContext, useContext } from "react";
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "./AuthContext";
+import { format } from "date-fns-tz";
 
 type TaskContextType = {
-  getTasks: () => Promise<any>;
-  createTask: (data: any) => Promise<any>;
-  updateTask: (data: any) => Promise<any>;
+  // getTasks: () => Promise<any>;
+  // createTask: (data: any) => Promise<any>;
+  // updateTask: (data: any) => Promise<any>;
   getTaskItems: () => Promise<any>;
   upsertTaskItems: (items: any[]) => Promise<any>;
+  upsertTaskCompletions: (val: number) => Promise<any>;
 };
 
 const TaskContext = createContext<TaskContextType | undefined>(undefined);
@@ -16,30 +18,33 @@ const TaskContext = createContext<TaskContextType | undefined>(undefined);
 export function TaskProvider({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
 
-  const getTasks = async () => {
-    if (!user) throw new Error("user not found");
-    return supabase.from("tasks").select("*").eq("user_id", user.id);
-  };
+  // const getTasks = async () => {
+  //   if (!user) throw new Error("user not found");
+  //   return supabase.from("tasks").select("*").eq("user_id", user.id);
+  // };
 
-  const createTask = async (data: any) => {
-    if (!user) throw new Error("user not found");
-    return supabase.from("tasks").insert([{ ...data, user_id: user.id }]);
-  };
+  // const createTask = async (data: any) => {
+  //   if (!user) throw new Error("user not found");
+  //   return supabase.from("tasks").insert([{ ...data, user_id: user.id }]);
+  // };
 
-  const updateTask = async (data: any) => {
-    if (!user) throw new Error("user not found");
-    return supabase.from("tasks").update(data).eq("user_id", user.id);
-  };
+  // const updateTask = async (data: any) => {
+  //   if (!user) throw new Error("user not found");
+  //   return supabase.from("tasks").update(data).eq("user_id", user.id);
+  // };
 
   // NEW GET TASK ITEMS
   const getTaskItems = async () => {
     if (!user) throw new Error("user not found to get task items");
-    const today = new Date().toISOString().slice(0, 10);
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const todayLocal = format(new Date(), "yyyy-MM-dd", {
+      timeZone: userTimeZone,
+    });
     const { data, error } = await supabase
       .from("task_items")
       .select("*")
       .eq("user_id", user.id)
-      .eq("date", today)
+      .eq("date", todayLocal)
       .order("task_number", { ascending: true });
     if (error) console.error("getTaskItems error:", error);
     return { data, error };
@@ -49,9 +54,12 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     tasks: { value: string; isChecked: boolean }[]
   ) => {
     if (!user) throw new Error("user not found to upsert task items");
-    const today = new Date().toISOString().slice(0, 10);
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const todayLocal = format(new Date(), "yyyy-MM-dd", {
+      timeZone: userTimeZone,
+    });
     const items = tasks.map((task, idx) => ({
-      date: today,
+      date: todayLocal,
       task_number: idx + 1,
       value: task.value,
       is_checked: task.isChecked,
@@ -64,14 +72,35 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     return { data, error };
   };
 
+  // update db with number of completed tasks
+  const upsertTaskCompletions = async (completedCount: number) => {
+    if (!user) throw new Error("user not found to upsert task completions");
+    const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const todayLocal = format(new Date(), "yyyy-MM-dd", {
+      timeZone: userTimeZone,
+    });
+    const { data, error } = await supabase
+      .from("task_completions")
+      .upsert(
+        [
+          {
+            user_id: user.id,
+            date: todayLocal,
+            completed_count: completedCount,
+          },
+        ],
+        { onConflict: "user_id,date" }
+      );
+  };
   return (
     <TaskContext.Provider
       value={{
-        getTasks,
-        createTask,
-        updateTask,
+        // getTasks,
+        // createTask,
+        // updateTask,
         getTaskItems,
         upsertTaskItems,
+        upsertTaskCompletions,
       }}
     >
       {children}
