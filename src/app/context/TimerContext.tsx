@@ -27,50 +27,6 @@ export function TimerProvider({ children }: { children: React.ReactNode }) {
     return data;
   };
 
-  // const insertTimer = async () => {
-  //   if (!user) throw new Error("No user found");
-
-  // if it's user's first time using clock, create default timer
-  //   const { data, error } = await supabase
-  //     .from("timer")
-  //     .upsert(
-  //       [
-  //         {
-  //           user_id: user.id,
-  //           duration: 1500,
-  //           initialRemainingTime: 1500,
-  //           mode: "study",
-  //           numStudy: 0,
-  //           numBreak: 0,
-  //           isPlaying: false,
-  //           isEditing: false,
-  //           timerKey: 0,
-  //           elapsedTime: 0,
-  //         },
-  //       ],
-  //       { ignoreDuplicates: true }
-  //     )
-  //     .select();
-
-  //   if (error) {
-  //     console.error("Upsert error:", error);
-  //     throw error;
-  //   }
-  //   return data;
-  // };
-
-  // const updateTimer = async (data: TimerType) => {
-  //   if (!user) throw new Error("No user found");
-  //   const { error } = await supabase
-  //     .from("timer")
-  //     .update(data)
-  //     .eq("user_id", user.id);
-  //   if (error) {
-  //     console.error("Update error:", error);
-  //     throw error;
-  //   }
-  // };
-
   // TODO: move local time into one function
   const upsertTimer = async (timerData: Partial<TimerType>) => {
     if (!user || !user.id) throw new Error("user not found in upsert timer");
