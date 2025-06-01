@@ -10,13 +10,13 @@ export default function CallbackHandler() {
   useEffect(() => {
     const code = searchParams.get("code");
 
-    console.log(code);
+    // console.log(code);
     // send unique code to supabase backend edge function
     if (code) {
       (async () => {
         const { data } = await supabase.auth.getSession();
         const access_token = data.session?.access_token;
-        console.log(access_token);
+        // console.log(access_token);
         if (!access_token) {
           console.error("No supabase access token found");
           router.push("/home");
