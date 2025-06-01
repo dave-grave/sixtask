@@ -8,10 +8,12 @@ export default function NavButton({
   page,
   isActive,
   onClick,
+  icon,
 }: {
   page: NavPageType;
   isActive: boolean;
   onClick: () => void;
+  icon?: React.ReactNode;
 }) {
   const circle = {
     width: 50,
@@ -46,7 +48,8 @@ export default function NavButton({
         onClick={onClick}
       >
         <span style={{ fontWeight: 600, color: isActive ? "#fff" : "#222" }}>
-          {page.charAt(0).toUpperCase()}
+          {icon}
+          {/* {page.charAt(0).toUpperCase()} */}
         </span>
       </motion.button>
     </div>
