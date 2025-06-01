@@ -10,6 +10,7 @@ type TaskContextType = {
   // updateTask: (data: any) => Promise<any>;
   getTaskItems: () => Promise<any>;
   upsertTaskItems: (items: any[]) => Promise<any>;
+  getTaskCompletions: () => Promise<any>;
   upsertTaskCompletions: (val: number) => Promise<any>;
 };
 
@@ -72,6 +73,18 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     return { data, error };
   };
 
+  // get completed tasks from db for bar chart
+  const getTaskCompletions = async () => {
+    if (!user) throw new Error("user not found to get task completions");
+    const { data, error } = await supabase
+      .from("task_completions")
+      .select("date, completed_count")
+      .eq("user_id", user.id)
+      .order("date", { ascending: true });
+    if (error) console.error("gettaskcompletions error: ", error);
+    return data ?? [];
+  };
+
   // update db with number of completed tasks
   const upsertTaskCompletions = async (completedCount: number) => {
     if (!user) throw new Error("user not found to upsert task completions");
@@ -79,19 +92,20 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
     const todayLocal = format(new Date(), "yyyy-MM-dd", {
       timeZone: userTimeZone,
     });
-    const { data, error } = await supabase
-      .from("task_completions")
-      .upsert(
-        [
-          {
-            user_id: user.id,
-            date: todayLocal,
-            completed_count: completedCount,
-          },
-        ],
-        { onConflict: "user_id,date" }
-      );
+    const { data, error } = await supabase.from("task_completions").upsert(
+      [
+        {
+          user_id: user.id,
+          date: todayLocal,
+          completed_count: completedCount,
+        },
+      ],
+      { onConflict: "user_id,date" }
+    );
+    if (error) console.error("upserttaskcompletions error:", error);
+    return { data, error };
   };
+
   return (
     <TaskContext.Provider
       value={{
@@ -100,6 +114,7 @@ export function TaskProvider({ children }: { children: React.ReactNode }) {
         // updateTask,
         getTaskItems,
         upsertTaskItems,
+        getTaskCompletions,
         upsertTaskCompletions,
       }}
     >
