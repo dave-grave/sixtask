@@ -15,7 +15,6 @@ export default function Callback() {
       (async () => {
         const { data } = await supabase.auth.getSession();
         const access_token = data.session?.access_token;
-        console.log("supabase access token", access_token);
         if (!access_token) {
           console.error("No supabase access token found");
           router.push("/home");
@@ -38,7 +37,7 @@ export default function Callback() {
             const contentType = res.headers.get("content-type");
             if (contentType && contentType.includes("application/json")) {
               const result = await res.json();
-              console.log("Edge Function response:", result);
+              // console.log("Edge Function response:", result);
             } else {
               const text = await res.text();
               console.error("Non-JSON response:", text);

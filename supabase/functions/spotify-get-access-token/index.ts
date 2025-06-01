@@ -145,7 +145,6 @@ serve(async (req) => {
       }
     );
     const devicesData = await devicesRes.json();
-    console.log(devicesData);
 
     return new Response(
       JSON.stringify({ access_token, devices: devicesData.devices || [] }),

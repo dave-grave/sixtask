@@ -23,9 +23,16 @@ export default function Spotify() {
           </button>
         </a>
       )}
-      <button className="bg-red-500 rounded px-4 py-2" onClick={logoutSpotify}>
-        Log out of Spotify
-      </button>
+      {spotifyToken ? (
+        <button
+          className="bg-red-500 rounded px-4 py-2"
+          onClick={logoutSpotify}
+        >
+          Log out of Spotify
+        </button>
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

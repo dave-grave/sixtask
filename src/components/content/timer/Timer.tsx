@@ -107,8 +107,7 @@ export default function Timer() {
       // const data = await getTimer();
       const timer = Array.isArray(data) ? data[0] : data;
 
-      // console.log(timer);
-      if (timer /* && !hasInitialized.current*/) {
+      if (timer) {
         setIsPlaying(false);
         setDuration(timer.duration ?? 900);
         setInitialRemainingTime(timer.initialRemainingTime ?? duration);
@@ -120,7 +119,6 @@ export default function Timer() {
         setGlobalElapsedTime(timer.elapsedTime ?? 0);
 
         userIdRef.current = timer.user_id ?? null;
-        // hasInitialized.current = true;
       }
     };
     fetchTimer();
