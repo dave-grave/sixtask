@@ -23,10 +23,10 @@ export default function Login() {
       router.push("/home");
     } catch (error: any) {
       setError(error.message);
+      setShowModal(true);
     } finally {
       setLoading(false);
     }
-    setShowModal(true);
   };
 
   const closeModal = () => {

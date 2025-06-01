@@ -4,12 +4,11 @@ import { useSpotifyContext } from "@/app/context/SpotifyContext";
 import SpotifyPlayer from "./SpotifyPlayer";
 
 export default function Spotify() {
-  const { profile, devices, getProfile, authUrl, spotifyToken } =
+  const { profile, devices, getProfile, authUrl, spotifyToken, logoutSpotify } =
     useSpotifyContext();
 
   useEffect(() => {
     getProfile();
-    // console.log(devices);
   }, []);
 
   return (
@@ -17,8 +16,16 @@ export default function Spotify() {
       {spotifyToken ? (
         <SpotifyPlayer token={spotifyToken} />
       ) : (
-        <a href={authUrl}>connect with spotify</a>
+        <a href={authUrl}>
+          <button className="bg-green-500 rounded px-4 py-2">
+            {" "}
+            connect with spotify
+          </button>
+        </a>
       )}
+      <button className="bg-red-500 rounded px-4 py-2" onClick={logoutSpotify}>
+        Log out of Spotify
+      </button>
     </div>
   );
 }

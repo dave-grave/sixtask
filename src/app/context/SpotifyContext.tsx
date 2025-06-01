@@ -20,6 +20,8 @@ export function SpotifyProvider({ children }: { children: React.ReactNode }) {
     "user-modify-playback-state",
     "user-read-currently-playing",
     "streaming",
+    "playlist-read-private",
+    "playlist-read-collaborative",
   ].join(" ");
   const authUrl =
     `https://accounts.spotify.com/authorize?` +
@@ -60,9 +62,22 @@ export function SpotifyProvider({ children }: { children: React.ReactNode }) {
     setDevices(devices);
   };
 
+  const logoutSpotify = () => {
+    setSpotifyToken(null);
+    setProfile(null);
+    setDevices([]);
+  };
+
   return (
     <SpotifyContext.Provider
-      value={{ profile, devices, getProfile, authUrl, spotifyToken }}
+      value={{
+        profile,
+        devices,
+        getProfile,
+        authUrl,
+        spotifyToken,
+        logoutSpotify,
+      }}
     >
       {children}
     </SpotifyContext.Provider>

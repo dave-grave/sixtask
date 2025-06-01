@@ -19,4 +19,5 @@ export type SpotifyContextType = {
   getProfile: () => Promise<void>;
   authUrl: string;
   spotifyToken: string | null;
+  logoutSpotify: () => void;
 };

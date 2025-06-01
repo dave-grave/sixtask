@@ -1,10 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
-
 export default function SpotifyPlayer({ token }: { token: string | null }) {
   const playerRef = useRef<any>(null);
   const [deviceId, setDeviceId] = useState<string | null>(null);
   const [currentTrack, setCurrentTrack] = useState<string | null>(null);
   const [isPaused, setIsPaused] = useState(true);
+
+  const [playlists, setPlaylists] = useState<{ name: string; uri: string }[]>(
+    []
+  );
+  const [selectedPlaylist, setSelectedPlaylist] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) return;
@@ -51,8 +55,33 @@ export default function SpotifyPlayer({ token }: { token: string | null }) {
     };
   }, [token]);
 
+  useEffect(() => {
+    const fetchPlaylists = async () => {
+      const res = await fetch(
+        "https://api.spotify.com/v1/me/playlists?limit=50",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      const data = await res.json();
+      if (data.items) {
+        setPlaylists(
+          data.items.map((pl: any) => ({
+            name: pl.name,
+            uri: pl.uri,
+          }))
+        );
+        setSelectedPlaylist(data.items[0]?.uri ?? null);
+      }
+    };
+    fetchPlaylists();
+  }, [token]);
+
   const playSong = async () => {
-    if (!deviceId || !token) return alert("player not ready");
+    if (!deviceId || !token || !selectedPlaylist)
+      return alert("player not ready");
 
     await fetch(
       `https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`,
@@ -63,7 +92,8 @@ export default function SpotifyPlayer({ token }: { token: string | null }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          uris: ["spotify:track:11dFghVXANMlKmJXsNCbNl"],
+          context_uri: selectedPlaylist,
+          offset: { position: 0 },
         }),
       }
     );
@@ -100,7 +130,7 @@ export default function SpotifyPlayer({ token }: { token: string | null }) {
     if (!deviceId || !token) return;
 
     await fetch(
-      `https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`,
+      `https://api.spotify.com/v1/me/player/next?device_id=${deviceId}`,
       {
         method: "POST",
         headers: {
@@ -113,7 +143,7 @@ export default function SpotifyPlayer({ token }: { token: string | null }) {
   const skipPrevious = async () => {
     if (!deviceId || !token) return;
     await fetch(
-      `https://api.spotify.com/v1/me/player/pause?device_id=${deviceId}`,
+      `https://api.spotify.com/v1/me/player/previous?device_id=${deviceId}`,
       {
         method: "POST",
         headers: {
@@ -132,6 +162,19 @@ export default function SpotifyPlayer({ token }: { token: string | null }) {
       >
         play song
       </button>
+      {playlists.length > 0 && (
+        <select
+          className="mb-2 p-2 rounded border"
+          value={selectedPlaylist ?? ""}
+          onChange={(e) => setSelectedPlaylist(e.target.value)}
+        >
+          {playlists.map((pl) => (
+            <option key={pl.uri} value={pl.uri}>
+              {pl.name}
+            </option>
+          ))}
+        </select>
+      )}
       <button
         className="bg-yellow-600 text-white disabled:text-black rounded px-4 py-2 transition hover:bg-yellow-800 disabled:cursor-not-allowed disabled:bg-gray-200"
         onClick={pauseSong}
