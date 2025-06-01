@@ -7,7 +7,9 @@ import { useAuth } from "@/app/context/AuthContext";
 
 export default function Tasks() {
   const { loading } = useAuth();
-  const [tasks, setTasks] = useState<string[]>(["", "", "", "", "", ""]);
+  const [tasks, setTasks] = useState(
+    Array(6).fill({ value: "", isChecked: false })
+  );
   const prevTasks = useRef<string[]>(tasks);
   const { getTasks, updateTask } = useTaskContext();
 
@@ -39,7 +41,13 @@ export default function Tasks() {
 
   const handleInputChange = (index: number, value: string) => {
     const updatedTasks = [...tasks];
-    updatedTasks[index] = value;
+    updatedTasks[index] = { ...updatedTasks[index], value: value };
+    setTasks(updatedTasks);
+  };
+
+  const handleCheckChange = (index: number, checked: boolean) => {
+    const updatedTasks = [...tasks];
+    updatedTasks[index] = { ...updatedTasks[index], isChecked: checked };
     setTasks(updatedTasks);
   };
 
@@ -48,8 +56,10 @@ export default function Tasks() {
       {tasks.map((task, idx) => (
         <TaskInput
           key={idx}
-          value={task}
+          value={task.value ?? ""}
           onChange={(val) => handleInputChange(idx, val)}
+          isChecked={task.isChecked ?? false}
+          onCheckChange={(checked) => handleCheckChange(idx, checked)}
         />
       ))}
     </div>
