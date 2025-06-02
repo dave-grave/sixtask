@@ -19,6 +19,10 @@ export default function Spotify() {
       ) : (
         <a href={authUrl}>connect with spotify</a>
       )}
+      <p>
+        Note: spotify only works if you are on the web and have a premium
+        account LOL
+      </p>
     </div>
   );
 }
