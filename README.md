@@ -16,3 +16,4 @@ react countdown timer component:
 other cool components:
 
 - https://21st.dev/react-bits/splash-cursor/default
+- https://codesandbox.io/p/sandbox/framer-motion-checkbox-animation-2cf2jn?file=%2Fsrc%2Fcomponents%2FCheckbox.tsx%3A1%2C1-121%2C1

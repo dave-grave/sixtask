@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { CountdownCircleTimer } from "react-countdown-circle-timer";
 import TimerChildren from "./TimerChildren";
 import { useTimerContext } from "@/app/context/TimerContext";
+import { format } from "date-fns-tz";
 
 const timerProps = {
   size: 300,
@@ -27,18 +28,6 @@ export default function Timer() {
   const [elapsedTime, setElapsedTime] = useState(0); // session elapsed time
   const [globalElapsedTime, setGlobalElapsedTime] = useState(0); // global elapsed time from db
   const [isEditing, setIsEditing] = useState(false); // pass into timerchildren
-
-  // not sure if i need this.
-  // function formatTimeString(totalSeconds: number) {
-  //   const hours = Math.floor(totalSeconds / 3600);
-  //   const minutes = Math.floor((totalSeconds % 3600) / 60);
-  //   const seconds = totalSeconds % 60;
-  //   return [
-  //     hours.toString().padStart(2, "0"),
-  //     minutes.toString().padStart(2, "0"),
-  //     seconds.toString().padStart(2, "0"),
-  //   ].join(":");
-  // }
 
   // variables to track study mode
   const [mode, setMode] = useState<"study" | "break">("study");
@@ -77,7 +66,7 @@ export default function Timer() {
   };
 
   // set timer context to supabase
-  const { getTimer, insertTimer, updateTimer } = useTimerContext();
+  const { getTimer, upsertTimer } = useTimerContext();
 
   // Track user_id for DB updates
   const userIdRef = useRef<string | null>(null);
@@ -87,12 +76,38 @@ export default function Timer() {
   // fetch timer data on mount
   useEffect(() => {
     const fetchTimer = async () => {
-      await insertTimer(); // upsert default timer if not in db (first sign-on)
+      // 1. Try to fetch today's timer row
       const data = await getTimer();
+      const userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const todayLocal = format(new Date(), "yyyy-MM-dd", {
+        timeZone: userTimeZone,
+      });
+
+      // 2. Find today's timer row
+      const todayTimer = Array.isArray(data)
+        ? data.find((row) => row.date === todayLocal)
+        : null;
+
+      if (todayTimer) {
+        // Use the existing timer data
+        // set state from todayTimer...
+      } else {
+        await upsertTimer({
+          isPlaying: false,
+          duration: 1500,
+          timerKey: 0,
+          mode: "study",
+          isEditing: false,
+          numStudy: 0,
+          numBreak: 0,
+          elapsedTime: 0,
+          initialRemainingTime: 1500,
+        });
+      }
+      // const data = await getTimer();
       const timer = Array.isArray(data) ? data[0] : data;
 
-      // console.log(timer);
-      if (timer /* && !hasInitialized.current*/) {
+      if (timer) {
         setIsPlaying(false);
         setDuration(timer.duration ?? 900);
         setInitialRemainingTime(timer.initialRemainingTime ?? duration);
@@ -104,39 +119,35 @@ export default function Timer() {
         setGlobalElapsedTime(timer.elapsedTime ?? 0);
 
         userIdRef.current = timer.user_id ?? null;
-        // hasInitialized.current = true;
       }
     };
     fetchTimer();
   }, []);
 
-  // save to db on unmount, play, pause, reset
+  // save to db on play, pause, reset
   useEffect(() => {
-    return () => {
-      if (!userIdRef.current) return;
-      updateTimer({
-        user_id: userIdRef.current,
-        isPlaying,
-        duration,
-        timerKey,
-        mode,
-        isEditing,
-        numStudy,
-        numBreak,
-        elapsedTime: globalElapsedTime + elapsedTime,
-        initialRemainingTime: Math.max(duration - elapsedTime, 1),
-      });
-    };
-  }, [isPlaying, duration]);
+    if (!userIdRef.current) return;
+    upsertTimer({
+      isPlaying,
+      duration,
+      timerKey,
+      mode,
+      isEditing,
+      numStudy,
+      numBreak,
+      elapsedTime: globalElapsedTime + elapsedTime,
+      initialRemainingTime: Math.max(duration - elapsedTime, 1),
+    });
+  }, [duration, elapsedTime]);
 
   return (
     <div className="flex flex-col justify-center items-center">
       <p className="p-2 text-center text-lg">
-        {mode === "study" ? `Study Time ${numStudy}` : `Break Time ${numBreak}`}
+        {mode === "study"
+          ? `Study Session #${numStudy}`
+          : `Break Session #${numBreak}`}
       </p>
-      <p className="p-2 text-center text-lg">
-        Time Elapsed: {elapsedTime}, {globalElapsedTime}
-      </p>
+      <p className="p-2 text-center text-lg"></p>
       <CountdownCircleTimer
         key={timerKey}
         isPlaying={isPlaying}

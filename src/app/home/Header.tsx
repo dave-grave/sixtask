@@ -1,5 +1,4 @@
 import React from "react";
-import { GenerateText } from "@/components/ui/GenerateText";
 
 export default function Header() {
   return (

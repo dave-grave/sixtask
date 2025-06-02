@@ -7,7 +7,12 @@ import Footer from "./Footer";
 import Navbar from "./Navbar";
 import Content from "./Content";
 
-export type NavPageType = "tasks" | "timer" | "spotify" | "dashboard";
+export type NavPageType =
+  | "tasks"
+  | "timer"
+  | "spotify"
+  | "dashboard"
+  | "settings";
 
 export default function Home() {
   // extend current page and navigation handler as props for Content to read and NavButtons to edit
@@ -33,7 +38,7 @@ export default function Home() {
           />
         </motion.div>
       </div>
-      <Footer />
+      <Footer handleNavigation={handleNavigation} />
     </div>
   );
 }
